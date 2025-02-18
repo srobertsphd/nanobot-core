@@ -1,56 +1,30 @@
-# Sam's Project Template
+# nanobot POC
 
-## Setup
+This project will contain the basic elements of Nanobot for document ingestion and vectorization, a basic frontend with a chat interface and retrieval, and a dockerized PostgreSQL database with Timescale vector extension.
 
-1. clone the repo
-```bash
-   git clone https://github.com/sams-projects/project-template.git  
-```
+## Documentation
 
-2. rename the directory
-```bash
-   mv template-directory new-project-name
-```
+1. **Ingest Documents**
 
-3. change to the new directory name
-```bash
-   cd new-project-name
-```
+    - [ ] For now, focus on PDFs.
+    
+    - [ ] Understand the Docling document structure and how to extract text and metadata.
+    
+    - [ ] Determine how to store documents to link page numbers to retrieved blobs.
 
-4. remove the .git directory
-```bash
-   rm -rf .git
-```
+2. **Chunk, Vectorize, and Store Data**
 
-5. initialize a new git repo        
-```bash
-   git init
-```
+    - [ ] Chunk the markdown data.
+    
+    - [ ] Vectorize the chunks.
+    
+    - [ ] Store the vectorized data in a PostgreSQL database with the Timescale vector extension.
 
-6. rename the master branch to main
-```bash
-   git branch -m master main
-```
+3. **Chat with Vectorized Data**
 
-7. add the files to the git repo
-```bash
-   git add .
-```
+    - [ ] Implement a chat interface to interact with the vectorized data.
 
-8. commit the files
-```bash
-   git commit -m "Initial commit"
-```
+4. **Search Vectorized Data**
 
-9. go to github and create a new repo that is private and not initialized with a readme
-
-10. connect the local repo to the github repo
-```bash
-   git remote add origin https://github.com/yourusername/your-repo-name.git
-```
-
-11. push to the github repo
-```bash
-   git push -u origin main
-```
+    - [ ] Implement search capabilities to query the vectorized data.
 
