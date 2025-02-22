@@ -12,7 +12,7 @@ class ChunkMetadata(BaseModel):
 
 class Chunks(BaseModel):
     text: str
-    vector: Annotated[List[float], Field(min_length=1536, max_length=1536)]
+    vector: Annotated[List[float], Field(min_length=3072, max_length=3072)]
     metadata_id: int
     
     class Config:

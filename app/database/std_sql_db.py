@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS chunk_metadata (
 CREATE TABLE IF NOT EXISTS chunks (
     id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
-    vector VECTOR(1536), 
+    vector VECTOR(3072), 
     metadata_id INTEGER REFERENCES chunk_metadata(id)
 );
 """
