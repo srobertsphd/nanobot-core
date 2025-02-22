@@ -4,6 +4,17 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from utils.tokenizer import OpenAITokenizerWrapper
 from utils.openai_embedding import get_embedding
+from pprint import pprint
+from pydantic import ValidationError
+
+import sys
+import os
+# sys.path.append('/path/to/project_root')  
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+from models.db_schemas import Chunks, ChunkMetadata
+
+
 
 load_dotenv()
 client = OpenAI()
@@ -23,9 +34,9 @@ chunker = HybridChunker(
 
 chunk_iter = chunker.chunk(dl_doc=result.document)
 chunks = list(chunk_iter)
+type(chunks[0])
+chunks[0].dict()
 
-
-    
 processed_chunks = [
     {
         "text": chunk.text,
@@ -48,10 +59,37 @@ processed_chunks = [
     for chunk in chunks
 ]
 
+pprint(processed_chunks[2])
+type(processed_chunks[2])
 
 for chunk in processed_chunks:
-    print(chunk)
+    pprint(chunk)
+    
+processed_chunks[0]
+
+processed_chunks[0].get('text')
+
+for chunk in processed_chunks:
+    vector = get_embedding(chunk.get('text'))
+    chunk['vector'] = vector
+    
+test_chunk = processed_chunks[2]
 
 
+try:
+    metadata = ChunkMetadata(**test_chunk['metadata'])
+    print("Metadata is valid:", metadata)
+except ValidationError as e:
+    print("Metadata validation error:", e)
 
+# Validate chunk
+try:
+    chunk = Chunks(
+        text=test_chunk['text'],
+        vector=test_chunk['vector'],
+        metadata_id=1  # Example metadata_id
+    )
+    print("Chunk is valid:", chunk)
+except ValidationError as e:
+    print("Chunk validation error:", e)
 

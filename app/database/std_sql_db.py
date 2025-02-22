@@ -111,27 +111,40 @@ def validate_and_upsert_chunk(conn, chunk_data: dict):
     If validation fails, no DB operations occur.
     """
     try:
-        # ✅ Full validation before any DB operation
-        validated_chunk = Chunks(**chunk_data)
+        # Validate metadata separately
+        metadata = chunk_data.get("metadata")
+        if not metadata:
+            raise ValueError("Metadata is required")
 
-        # 🔄 Upsert metadata
+        # Upsert metadata and get metadata_id
         metadata_id = upsert_chunk_metadata(
             conn,
-            validated_chunk.metadata.filename,
-            validated_chunk.metadata.page_numbers,
-            validated_chunk.metadata.title
+            metadata["filename"],
+            metadata["page_numbers"],
+            metadata["title"]
         )
 
-        # 🔄 Upsert chunk
+        # Validate the chunk with the obtained metadata_id
+        chunk_data_with_id = {
+            "text": chunk_data["text"],
+            "vector": chunk_data["vector"],
+            "metadata_id": metadata_id
+        }
+        validated_chunk = Chunks(**chunk_data_with_id)
+
+        # Upsert chunk
         return upsert_chunk(
             conn,
             validated_chunk.text,
             validated_chunk.vector,
-            metadata_id
+            validated_chunk.metadata_id
         )
 
     except ValidationError as e:
         print(f"❌ Validation failed: {e}")
+        raise
+    except Exception as e:
+        print(f"❌ Error: {e}")
         raise
     
 
@@ -141,8 +154,23 @@ def main():
         conn = get_connection()
         conn.autocommit = True  # Automatically commit each statement
 
-        enable_pgvector_extension(conn)
-        create_tables(conn)
+        # enable_pgvector_extension(conn)
+        # create_tables(conn)
+
+        # Example data to insert
+        example_chunk_data = {
+            "text": "This is a sample chunk of text.",
+            "vector": [0.0] * 1536,  # Example vector with 1536 float elements
+            "metadata": {
+                "filename": "example_file.txt",
+                "page_numbers": [1, 2, 3],
+                "title": "Example Title"
+            }
+        }
+
+        # Validate and upsert the chunk
+        chunk_id = validate_and_upsert_chunk(conn, example_chunk_data)
+        print(f"Inserted chunk with ID: {chunk_id}")
 
     except Exception as e:
         print(f"❌ Error during database setup: {e}")

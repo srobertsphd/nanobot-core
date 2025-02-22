@@ -1,5 +1,5 @@
-from pydantic import BaseModel, conlist
-from typing import List
+from pydantic import BaseModel, Field
+from typing import List, Annotated
 
 
 class ChunkMetadata(BaseModel):
@@ -12,7 +12,7 @@ class ChunkMetadata(BaseModel):
 
 class Chunks(BaseModel):
     text: str
-    vector: conlist(float, min_items=1536, max_items=1536)
+    vector: Annotated[List[float], Field(min_length=1536, max_length=1536)]
     metadata_id: int
     
     class Config:
