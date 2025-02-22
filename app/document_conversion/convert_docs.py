@@ -1,5 +1,5 @@
 from docling.document_converter import DocumentConverter
-from sitemap import get_sitemap_urls
+from utils.sitemap import get_sitemap_urls
 from pprint import pprint
 
 converter = DocumentConverter()
