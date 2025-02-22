@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
-from database.vector_store import VectorStore
+from app.services.vector_store import VectorStore
 from timescale_vector.client import uuid_from_time
 
 # Initialize VectorStore
