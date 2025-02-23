@@ -1,32 +1,16 @@
-from app.database.std_sql_db import get_connection, validate_and_upsert_chunk
+# from database.std_sql_db import get_connection, validate_and_upsert_chunk
+import sys
+import os
 
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(project_root)
 
+print(sys.path)
+from app.document_conversion.chunking import simple_docling_convert, chunk_document, process_chunks, get_embeddings_for_chunk_text
 
-try:
-    conn = get_connection()
-    conn.autocommit = True  # Automatically commit each statement
+doc_path = "/home/sng/nanobot-poc/data/pdf/cns-user-manual.pdf"
 
-    # enable_pgvector_extension(conn)
-    # create_tables(conn)
+result = simple_docling_convert(doc_path)
 
-    # Example data to insert
-    example_chunk_data = {
-        "text": "This is a sample chunk of text.",
-        "vector": [0.0] * 1536,  # Example vector with 1536 float elements
-        "metadata": {
-            "filename": "example_file.txt",
-            "page_numbers": [1, 2, 3],
-            "title": "Example Title"
-        }
-    }
+print(result.document.export_to_markdown())
 
-    # Validate and upsert the chunk
-    chunk_id = validate_and_upsert_chunk(conn, example_chunk_data)
-    print(f"Inserted chunk with ID: {chunk_id}")
-
-except Exception as e:
-    print(f"❌ Error during database setup: {e}")
-finally:
-    if conn is not None:
-        conn.close()
-        print("🔌 Database connection closed.")
