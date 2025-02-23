@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(project_root)
 
-from app.models.validators import validate_chunk_metadata, validate_chunk
+from app.models.validators import validate_chunk
 
 
 load_dotenv()
@@ -24,37 +24,23 @@ CREATE EXTENSION IF NOT EXISTS vector;
 """
 
 CREATE_TABLE_QUERY = """
-CREATE TABLE IF NOT EXISTS chunk_metadata (
-    id SERIAL PRIMARY KEY,
-    filename TEXT,
-    page_numbers INTEGER[],
-    title TEXT
-);
-
 CREATE TABLE IF NOT EXISTS chunks (
     id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
-    vector VECTOR(3072), 
-    metadata_id INTEGER REFERENCES chunk_metadata(id)
+    vector VECTOR(3072),
+    metadata JSONB
 );
 """
 
-UPSERT_CHUNK_METADATA_QUERY = """
-    INSERT INTO chunk_metadata (filename, page_numbers, title)
-    VALUES (%s, %s, %s)
-    ON CONFLICT (filename, title)
-    DO UPDATE SET page_numbers = EXCLUDED.page_numbers
-    RETURNING id;
-"""
-
 UPSERT_CHUNK_QUERY = """
-    INSERT INTO chunks (text, vector, metadata_id)
+    INSERT INTO chunks (text, vector, metadata)
     VALUES (%s, %s, %s)
-    ON CONFLICT (text, metadata_id)
-    DO UPDATE SET vector = EXCLUDED.vector
+    ON CONFLICT (text, metadata->>'filename', metadata->>'title')
+    DO UPDATE SET 
+        vector = EXCLUDED.vector,
+        metadata = EXCLUDED.metadata
     RETURNING id;
 """
-
 def get_connection():
     """Establish database connection."""
     return psycopg2.connect(**DATABASE_CONFIG)
@@ -73,7 +59,6 @@ def create_database(db_name):
         cur.close()
         conn.close()
 
-#create_database("nanobot_poc")
 
 def enable_pgvector_extension(conn):
     """Enable the pgvector extension in PostgreSQL."""
@@ -88,27 +73,15 @@ def create_tables(conn):
         cur.execute(CREATE_TABLE_QUERY)
         print("✅ Tables created successfully with pgvector support!")
 
-        
-def upsert_chunk_metadata(conn, filename, page_numbers, title):
-    """
-    Upsert metadata based on unique filename + title combination.
-    Returns the metadata_id.
-    """
-    with conn.cursor() as cur:
-        cur.execute(UPSERT_CHUNK_METADATA_QUERY, (filename, page_numbers, title))
-        metadata_id = cur.fetchone()[0]
-        print(f"✅ Upserted chunk_metadata with id: {metadata_id}")
-        return metadata_id
 
-def upsert_chunk(conn, text, vector, metadata_id):
+def upsert_chunk(conn, text, vector, metadata):
     """
-    Upsert chunk based on text + metadata_id combination.
+    Upsert chunk based on text + metadata combination.
     If the same text exists for the same metadata, update vector.
     """
     with conn.cursor() as cur:
-        cur.execute(UPSERT_CHUNK_QUERY, (text, vector, metadata_id))
+        cur.execute(UPSERT_CHUNK_QUERY, (text, vector, metadata))
         chunk_id = cur.fetchone()[0]
         print(f"✅ Upserted chunk with id: {chunk_id}")
         return chunk_id
 
-    

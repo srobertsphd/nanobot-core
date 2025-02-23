@@ -1,19 +1,13 @@
 from pydantic import BaseModel, Field
-from typing import List, Annotated
+from typing import List, Any, Dict
 
 
-class ChunkMetadata(BaseModel):
-    filename: str
-    page_numbers: List[int]
-    title: str
-    
-    class Config:
-        from_attributes = True
+
 
 class Chunks(BaseModel):
     text: str
-    vector: Annotated[List[float], Field(min_length=3072, max_length=3072)]
-    metadata_id: int
+    vector: List[float] = Field(min_length=3072, max_length=3072)
+    metadata_id: Dict[str, Any]
     
     class Config:
         from_attributes = True  

@@ -22,3 +22,4 @@ pprint(chunk)
 
 validate_chunk_metadata(chunk.get('metadata'))
 chunk.get('metadata')
+validate_chunk(chunk.get('text'), chunk.get('vector'), chunk.get('metadata'))

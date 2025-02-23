@@ -1,40 +1,30 @@
-from .db_schemas import ChunkMetadata, Chunks
+from .db_schemas import Chunks
 from pydantic import ValidationError
 
-def validate_chunk_metadata(metadata: dict) -> ChunkMetadata:
+def validate_chunk(chunk_data: dict) -> Chunks:
     """
-    Validate chunk metadata using Pydantic model.
+    Validate chunk data with flexible metadata structure.
     
     Args:
-        metadata (dict): Metadata dictionary to validate
-        
-    Returns:
-        ChunkMetadata: Validated metadata model
-        
-    Raises:
-        ValidationError: If metadata is invalid
-    """
-    if not metadata:
-        raise ValueError("Metadata is required")
-    return ChunkMetadata(**metadata)
-
-def validate_chunk(text: str, vector: list, metadata_id: int) -> Chunks:
-    """
-    Validate chunk data using Pydantic model.
-    
-    Args:
-        text (str): Chunk text
-        vector (list): Embedding vector
-        metadata_id (int): Associated metadata ID
+        chunk_data (dict): Dictionary containing text, vector, and metadata
         
     Returns:
         Chunks: Validated chunk model
         
     Raises:
-        ValidationError: If chunk data is invalid
+        ValidationError: If data is invalid
     """
-    return Chunks(
-        text=text,
-        vector=vector,
-        metadata_id=metadata_id
-    )
+    if not chunk_data:
+        raise ValueError("Chunk data is required")
+    
+    if "metadata" not in chunk_data or not isinstance(chunk_data["metadata"], dict):
+        raise ValueError("Metadata must be a dictionary")
+    
+    validated = Chunks(**chunk_data)
+    
+    print("✅ Chunk validation successful:")
+    print(f"  • Text length: {len(validated.text)} chars")
+    print(f"  • Vector dimensions: {len(validated.vector)}")
+    print(f"  • Metadata fields: {list(validated.metadata.keys())}")
+    
+    return validated
