@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(project_root)
 
-from app.models.validators import validate_chunk
+# from app.models.validators import validate_chunk
 
 
 load_dotenv()
