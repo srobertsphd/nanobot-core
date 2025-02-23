@@ -1,5 +1,5 @@
 from .db_schemas import Chunks
-from pydantic import ValidationError
+
 
 def validate_chunk(chunk_data: dict) -> Chunks:
     """
