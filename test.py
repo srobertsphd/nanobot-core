@@ -1,4 +1,3 @@
-# from docling.datamodel.document import ConversionResult
 from app.document_conversion.chunking import (
     simple_docling_convert, 
     chunk_document, 
@@ -6,17 +5,11 @@ from app.document_conversion.chunking import (
     get_embeddings_for_chunk_text
 )
 from app.document_conversion.utils.file_handling import (
-    save_processed_document,
     get_files_from_base_path,
     save_docling_and_md
 )
 from app.models.validators import validate_chunk
 from pprint import pprint
-
-# def save_docling_and_md(doc_path: str, result: ConversionResult):
-#     docling_document = result.document
-#     md_data = docling_document.export_to_markdown()
-#     save_processed_document(doc_path, docling_document, md_data)
 
 
 def process_document(doc_path: str):
@@ -34,14 +27,24 @@ def process_document(doc_path: str):
     print(f"Done! Returning {len(processed_chunks_with_embeddings)} chunks with embeddings")
     return processed_chunks_with_embeddings
 
+#------------------------------------------------------------
+#       Process all files in the original directory
+#------------------------------------------------------------
+
 base_path = "/home/sng/nanobot-poc/data/original"
 files = get_files_from_base_path(base_path)
 
 for file in files:
     chunks_with_embeddings = process_document(file)
+    
+#------------------------------------------------------------
+#                 Process a single file
+#------------------------------------------------------------
 
+file = "/home/sng/nanobot-poc/data/original/cns-user-manual.pdf"
+chunks_with_embeddings = process_document(file)
 
-chunk = chunks_with_embeddings[5]
+chunk = chunks_with_embeddings[1]
 pprint(chunk)
 type(chunk)
 
