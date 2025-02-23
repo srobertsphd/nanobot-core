@@ -7,21 +7,9 @@ from openai import OpenAI
 from app.document_conversion.utils.tokenizer import OpenAITokenizerWrapper
 from app.document_conversion.utils.openai_embedding import get_embedding
 
-# from pprint import pprint
-# from pydantic import ValidationError
-
-# import sys
-# import os
-# # sys.path.append('/path/to/project_root')  
-# parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# sys.path.append(parent_dir)
-# from models.db_schemas import Chunks, ChunkMetadata
-
 load_dotenv()
 client = OpenAI()
 
-
-doc_path = "/home/sng/nanobot-poc/data/pdf/cns-user-manual.pdf"
 
 tokenizer = OpenAITokenizerWrapper()
 MAX_TOKENS = 8191 # max tokens for text-embeddding-3-large max context window
@@ -33,9 +21,6 @@ def simple_docling_convert(doc_path) -> DocumentConverter:
     result = converter.convert(doc_path)
     return result
 
-# result = simple_docling_convert(doc_path)
-
-# type(result)
 
 def chunk_document(result) -> list[DocChunk]:
     """Chunk the document using docling. 
@@ -55,8 +40,6 @@ def chunk_document(result) -> list[DocChunk]:
     chunks = list(chunk_iter)
     return chunks
 
-# chunks = chunk_document(result)
-# type(chunks[0])
 
 def process_chunks(chunks) -> list[dict]:
     """
@@ -91,9 +74,6 @@ def process_chunks(chunks) -> list[dict]:
     ]
     return processed_chunks
 
-# processed_chunks = process_chunks(chunks)
-# type(processed_chunks[0])
-# pprint(processed_chunks[0])
 
 def get_embeddings_for_chunk_text(processed_chunks):
     for chunk in processed_chunks:

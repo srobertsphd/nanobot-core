@@ -4,7 +4,7 @@ from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 
 
 class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
-    """Minimal wrapper fro OpenAI's tokenizer"""
+    """Minimal wrapper for OpenAI's tokenizer"""
     
     def __init__(
         self, model_name: str = "cl100k_base", max_length: int = 8192, **kwargs,
