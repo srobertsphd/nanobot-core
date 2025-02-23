@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(project_root)
 
-# from app.models.validators import validate_chunk
+from app.models.validators import validate_chunk
 
 
 load_dotenv()
@@ -41,6 +41,7 @@ UPSERT_CHUNK_QUERY = """
         metadata = EXCLUDED.metadata
     RETURNING id;
 """
+
 def get_connection():
     """Establish database connection."""
     return psycopg2.connect(**DATABASE_CONFIG)
@@ -79,9 +80,48 @@ def upsert_chunk(conn, text, vector, metadata):
     Upsert chunk based on text + metadata combination.
     If the same text exists for the same metadata, update vector.
     """
+    conn = get_connection()
+    
     with conn.cursor() as cur:
         cur.execute(UPSERT_CHUNK_QUERY, (text, vector, metadata))
         chunk_id = cur.fetchone()[0]
         print(f"✅ Upserted chunk with id: {chunk_id}")
         return chunk_id
 
+def bulk_validate_and_upsert_chunks(conn, chunks: list[dict]) -> list[int]:
+    """
+    Validate and upsert multiple chunks using a single database connection.
+    
+    Args:
+        conn: Single database connection used for all operations
+        chunks: List of dictionaries containing text, vector, and metadata
+        
+    Returns:
+        list[int]: List of inserted chunk IDs
+    """
+    chunk_ids = []
+    
+    try:
+        # Use the same connection for all operations
+        with conn.cursor() as cur:  # Create one cursor for all operations
+            for chunk in chunks:
+                # Validate chunk
+                validated_chunk = validate_chunk(chunk)
+                
+                # Use the same cursor for each upsert
+                cur.execute(UPSERT_CHUNK_QUERY, (
+                    validated_chunk.text,
+                    validated_chunk.vector,
+                    validated_chunk.metadata
+                ))
+                chunk_id = cur.fetchone()[0]
+                chunk_ids.append(chunk_id)
+            
+        conn.commit()  # Single commit for all operations
+        print(f"✅ Successfully processed {len(chunk_ids)} chunks")
+        return chunk_ids
+        
+    except Exception as e:
+        print(f"❌ Error in bulk processing: {e}")
+        conn.rollback()
+        raise

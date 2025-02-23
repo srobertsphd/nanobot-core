@@ -47,3 +47,11 @@ class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
     def from_pretrained(cls, *args, **kwargs):
         """class method to match HuggingFace's interface."""
         return cls
+
+    def _encode_plus(self, text: str, **kwargs) -> Dict:
+        """Required by PreTrainedTokenizerBase"""
+        tokens = self.tokenizer.encode(text)
+        return {
+            "input_ids": tokens,
+            "attention_mask": [1] * len(tokens)
+        }

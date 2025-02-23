@@ -5,9 +5,9 @@ from typing import List, Any, Dict
 
 
 class Chunks(BaseModel):
-    text: str
-    vector: List[float] = Field(min_length=3072, max_length=3072)
-    metadata: Dict[str, Any]
+    text: str | None    
+    vector: List[float] | None = Field(min_length=3072, max_length=3072)
+    metadata: Dict[str, Any] | None
     
     class Config:
         from_attributes = True  
