@@ -4,12 +4,17 @@ from app.document_conversion.chunking import (
     process_chunks, 
     get_embeddings_for_chunk_text
 )
-from app.document_conversion.utils.file_handling import (
+from app.utils.file_handling import (
     get_files_from_base_path,
     save_docling_and_md
 )
-from app.models.validators import validate_chunk
-from pprint import pprint
+from app.database.std_sql_db import (
+    get_connection,
+    # create_database,
+    create_tables,
+    bulk_validate_and_insert_chunks,
+    enable_pgvector_extension,
+)
 
 
 def process_document(doc_path: str):
@@ -44,8 +49,16 @@ for file in files:
 file = "/home/sng/nanobot-poc/data/original/cns-user-manual.pdf"
 chunks_with_embeddings = process_document(file)
 
-chunk = chunks_with_embeddings[1]
-pprint(chunk)
-type(chunk)
+#------------------------------------------------------------
+#               Initialize database connection
+#------------------------------------------------------------
 
-validate_chunk(chunk)
+# create_database("nanobot_poc")
+
+conn = get_connection()
+enable_pgvector_extension(conn)
+create_tables(conn)
+id_list = bulk_validate_and_insert_chunks(conn, chunks_with_embeddings)
+
+
+

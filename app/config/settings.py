@@ -1,63 +1,67 @@
-import logging
-import os
-from datetime import timedelta
-from functools import lru_cache
-from typing import Optional
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+class DatabaseSettings(BaseSettings):
+    name: str
+    user: str
+    password: str
+    host: str
+    port: str
 
-load_dotenv(dotenv_path="./.env")
-
-
-def setup_logging():
-    """Configure basic logging for the application."""
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    model_config = SettingsConfigDict(
+        env_prefix="LOCAL_DB_"  # This will look for LOCAL_DB_NAME, LOCAL_DB_USER, etc.
     )
 
+    def get_connection_dict(self) -> dict:
+        return {
+            "dbname": self.name,
+            "user": self.user,
+            "password": self.password,
+            "host": self.host,
+            "port": self.port
+        }
 
-class LLMSettings(BaseModel):
-    """Base settings for Language Model configurations."""
+class AdminDatabaseSettings(BaseSettings):
+    name: str
+    user: str
+    password: str
+    host: str
+    port: str
 
-    temperature: float = 0.0
-    max_tokens: Optional[int] = None
-    max_retries: int = 3
+    model_config = SettingsConfigDict(
+        env_prefix="LOCAL_DB_ADMIN_"  # This will look for LOCAL_DB_ADMIN_NAME, etc.
+    )
 
+    def get_connection_dict(self) -> dict:
+        return {
+            "dbname": self.name,
+            "user": self.user,
+            "password": self.password,
+            "host": self.host,
+            "port": self.port
+        }
 
-class OpenAISettings(LLMSettings):
-    """OpenAI-specific settings extending LLMSettings."""
+class OpenAISettings(BaseSettings):
+    api_key: str
+    model: str = "gpt-4o"
+    embedding_model: str = "text-embedding-3-large"
+    temperature: float = 0.7
+    max_tokens: int = 8191
 
-    api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY"))
-    default_model: str = Field(default="gpt-4o")
-    embedding_model: str = Field(default="text-embedding-3-small")
+    model_config = SettingsConfigDict(
+        env_prefix="OPENAI_"  # This will look for OPENAI_API_KEY, etc.
+    )
 
+class Settings(BaseSettings):
+    local_db: DatabaseSettings = DatabaseSettings()
+    admin_db: AdminDatabaseSettings = AdminDatabaseSettings()
+    openai: OpenAISettings = OpenAISettings()
 
-class DatabaseSettings(BaseModel):
-    """Database connection settings."""
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra='ignore'
+    )
 
-    service_url: str = Field(default_factory=lambda: os.getenv("TIMESCALE_SERVICE_URL"))
-
-
-class VectorStoreSettings(BaseModel):
-    """Settings for the VectorStore."""
-
-    table_name: str = "embeddings"
-    embedding_dimensions: int = 1536
-    time_partition_interval: timedelta = timedelta(days=7)
-
-
-class Settings(BaseModel):
-    """Main settings class combining all sub-settings."""
-
-    openai: OpenAISettings = Field(default_factory=OpenAISettings)
-    database: DatabaseSettings = Field(default_factory=DatabaseSettings)
-    vector_store: VectorStoreSettings = Field(default_factory=VectorStoreSettings)
-
-
-@lru_cache()
-def get_settings() -> Settings:
-    """Create and return a cached instance of the Settings."""
-    settings = Settings()
-    setup_logging()
-    return settings
+# Create a singleton instance
+settings = Settings()

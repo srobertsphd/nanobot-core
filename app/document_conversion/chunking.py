@@ -1,18 +1,16 @@
-
 from docling.chunking import HybridChunker
 from docling.document_converter import DocumentConverter
 from docling_core.transforms.chunker.hierarchical_chunker import DocChunk
 from dotenv import load_dotenv
 from openai import OpenAI
-from app.document_conversion.utils.tokenizer import OpenAITokenizerWrapper
-from app.document_conversion.utils.openai_embedding import get_embedding
+from app.utils.tokenizer import OpenAITokenizerWrapper
+from app.utils.openai_embedding import get_embedding
+from app.config.settings import settings
 
-load_dotenv()
-client = OpenAI()
-
+client = OpenAI(api_key=settings.openai.api_key)
 
 tokenizer = OpenAITokenizerWrapper()
-MAX_TOKENS = 8191 # max tokens for text-embeddding-3-large max context window
+MAX_TOKENS = settings.openai.max_tokens # max tokens for text-embeddding-3-large max context window
 
 
 def simple_docling_convert(doc_path) -> DocumentConverter:
@@ -81,36 +79,4 @@ def get_embeddings_for_chunk_text(processed_chunks):
         chunk['vector'] = vector
     return processed_chunks
 
-# processed_chunks_with_embeddings = get_embeddings_for_chunk_text(processed_chunks)
-
-# for chunk in processed_chunks:
-#     pprint(chunk)
-    
-# processed_chunks[0]
-
-# processed_chunks[0].get('text')
-
-# for chunk in processed_chunks:
-#     vector = get_embedding(chunk.get('text'))
-#     chunk['vector'] = vector
-    
-# test_chunk = processed_chunks_with_embeddings[2]
-
-
-# try:
-#     metadata = ChunkMetadata(**test_chunk['metadata'])
-#     print("Metadata is valid:", metadata)
-# except ValidationError as e:
-#     print("Metadata validation error:", e)
-
-# # Validate chunk
-# try:
-#     chunk = Chunks(
-#         text=test_chunk['text'],
-#         vector=test_chunk['vector'],
-#         metadata_id=1  # Example metadata_id
-#     )
-#     print("Chunk is valid:", chunk)
-# except ValidationError as e:
-#     print("Chunk validation error:", e)
 
