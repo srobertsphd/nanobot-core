@@ -1,9 +1,16 @@
 import streamlit as st
 from openai import OpenAI
 from app.database.std_sql_db import get_connection, search_similar_chunks
+from app.config.settings import settings
+import jinja2
+import os
 
 
 client = OpenAI()
+
+# Set up Jinja2 environment
+template_loader = jinja2.FileSystemLoader(searchpath="app/prompts/templates")
+template_env = jinja2.Environment(loader=template_loader)
 
 def get_context_from_db(query: str, limit: int = 5):
     """
@@ -32,6 +39,52 @@ def get_context_from_db(query: str, limit: int = 5):
         return []
     finally:
         conn.close()
+
+def get_chat_response(prompt: str, context_chunks: list) -> str:
+    """
+    Generate a response using OpenAI's chat completion API with retrieved context
+    
+    Args:
+        prompt: The user's question
+        context_chunks: List of relevant chunks from the database
+        
+    Returns:
+        Generated response from the model
+    """
+    # Prepare context text from chunks
+    context_text = ""
+    for chunk in context_chunks:
+        context_text += f"{chunk['text']}\n\n"
+        if 'metadata' in chunk:
+            context_text += f"Source: {chunk['metadata'].get('source', 'Unknown')}\n\n"
+    
+    # Load and render the system prompt template
+    try:
+        template = template_env.get_template("rag_system_prompt.j2")
+        system_message = template.render(context_text=context_text)
+    except Exception as e:
+        print(f"Error loading template: {e}")
+    
+    try:
+        # Print the model being used
+        print(f"Using model: {settings.openai.model}")
+        
+        # Call OpenAI API using settings from config
+        response = client.chat.completions.create(
+            model=settings.openai.model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=settings.openai.temperature,
+            max_tokens=settings.openai.chat_max_tokens  # Use the chat-specific max tokens setting
+        )
+        
+        # Extract and return the response text
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return f"Sorry, I encountered an error while generating a response: {str(e)}"
 
 # Test the function
 if __name__ == "__main__":
@@ -82,11 +135,11 @@ if __name__ == "__main__":
             else:
                 st.warning("No relevant information found in the database.")
         
-        # TODO: Next step will be to implement get_chat_response function
-        # that uses this context to generate a response
+        # Generate response using the context
+        with st.spinner("Generating response..."):
+            response = get_chat_response(prompt, context_chunks)
         
-        # For now, just acknowledge the query
+        # Display assistant response
         with st.chat_message("assistant"):
-            response = f"I found {len(context_chunks)} relevant pieces of information in the database."
             st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})

@@ -45,7 +45,8 @@ class OpenAISettings(BaseSettings):
     model: str = "gpt-4o"
     embedding_model: str = "text-embedding-3-large"
     temperature: float = 0.0
-    max_tokens: int = 8191
+    chat_max_tokens: int = 4096  # Maximum tokens in the model's response for chat completions
+    embedding_max_tokens: int = 8191  # Maximum tokens for text that can be embedded
 
     model_config = SettingsConfigDict(
         env_prefix="OPENAI_"  # This will look for OPENAI_API_KEY, etc.
