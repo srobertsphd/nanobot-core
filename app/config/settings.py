@@ -44,7 +44,7 @@ class OpenAISettings(BaseSettings):
     api_key: str
     model: str = "gpt-4o"
     embedding_model: str = "text-embedding-3-large"
-    temperature: float = 0.7
+    temperature: float = 0.0
     max_tokens: int = 8191
 
     model_config = SettingsConfigDict(

@@ -1,9 +1,11 @@
+from app.config.settings import settings  # noqa: F401
 from app.document_conversion.chunking import (
-    simple_docling_convert, 
+    # simple_docling_convert, 
     chunk_document, 
     process_chunks, 
     get_embeddings_for_chunk_text
 )
+from app.document_conversion.extract import simple_docling_convert
 from app.utils.file_handling import (
     get_files_from_base_path,
     save_docling_and_md

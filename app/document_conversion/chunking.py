@@ -1,7 +1,5 @@
 from docling.chunking import HybridChunker
-from docling.document_converter import DocumentConverter
 from docling_core.transforms.chunker.hierarchical_chunker import DocChunk
-from dotenv import load_dotenv
 from openai import OpenAI
 from app.utils.tokenizer import OpenAITokenizerWrapper
 from app.utils.openai_embedding import get_embedding
@@ -12,12 +10,6 @@ client = OpenAI(api_key=settings.openai.api_key)
 tokenizer = OpenAITokenizerWrapper()
 MAX_TOKENS = settings.openai.max_tokens # max tokens for text-embeddding-3-large max context window
 
-
-def simple_docling_convert(doc_path) -> DocumentConverter:
-    """Simple conversion by docling. Returns a docling document object"""
-    converter = DocumentConverter()
-    result = converter.convert(doc_path)
-    return result
 
 
 def chunk_document(result) -> list[DocChunk]:
