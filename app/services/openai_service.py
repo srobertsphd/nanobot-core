@@ -8,6 +8,7 @@ including chat completions and embeddings.
 from openai import OpenAI
 import jinja2
 from app.config.settings import settings
+from app.services.prompt_loader import PromptLoader
 
 # Initialize the OpenAI client
 client = OpenAI(api_key=settings.openai.api_key)
@@ -57,26 +58,22 @@ def get_chat_response(prompt: str, context_chunks: list) -> str:
         if 'metadata' in chunk:
             context_text += f"Source: {chunk['metadata'].get('source', 'Unknown')}\n\n"
     
-    # Load and render the system prompt template
-    template = template_env.get_template("rag_system_prompt.j2")
-    system_message = template.render(context_text=context_text)
+    # Get system instructions from existing template
+    system_message = PromptLoader.render_prompt("rag_system_prompt")
     
     try:
-        # Print the model being used
-        print(f"Using model: {settings.openai.model}")
-        
         # Call OpenAI API using settings from config
         response = client.chat.completions.create(
             model=settings.openai.model,
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
+                {"role": "assistant", "content": f"Here's relevant information I found:\n\n{context_text}"}
             ],
             temperature=settings.openai.temperature,
             max_tokens=settings.openai.chat_max_tokens
         )
         
-        # Extract and return the response text
         return response.choices[0].message.content
     except Exception as e:
         print(f"Error generating response: {e}")

@@ -4,7 +4,7 @@ from app.services.openai_service import get_chat_response
 
 # Test the function
 if __name__ == "__main__":
-    st.title("Nanobot POC")
+    st.title("🤖 Nanobot POC")
     
     # Simple chat interface
     if "messages" not in st.session_state:
