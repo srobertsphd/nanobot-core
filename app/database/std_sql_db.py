@@ -1,9 +1,9 @@
 """
 PostgreSQL Database Interface with pgvector Support
 
-This module provides functions for interacting with a PostgreSQL database
-that uses the pgvector extension for vector similarity search. It handles
-database connection, table creation, and vector-based operations.
+This module provides functions for interacting with a Local PostgreSQL 
+database that uses the pgvector extension for vector similarity search. 
+It handles database connection, table creation, and vector-based operations.
 """
 
 import psycopg2
@@ -57,31 +57,19 @@ INSERT_CHUNK_QUERY = """
     RETURNING id;
 """
 
-def get_connection():
-    """
-    Establish a connection to the PostgreSQL database.
-    
-    Returns:
-        psycopg2.connection: A connection object to the database
-        
-    Raises:
-        psycopg2.Error: If connection fails
-    """
+def get_connection() -> psycopg2.connection:
+    """Connect to the PostgreSQL database using settings configuration."""
     try:
         return psycopg2.connect(**settings.local_db.get_connection_dict())
     except psycopg2.Error as e:
         print(f"Error connecting to database: {e}")
         raise
 
-def create_database(db_name):
-    """
-    Create a new PostgreSQL database.
+def create_database(db_name: str) -> None:
+    """Create a new PostgreSQL database using admin credentials.
     
     Args:
-        db_name (str): Name of the database to create
-        
-    Note:
-        This function uses admin credentials from settings
+        db_name: Name of the database to create
     """
     # Use admin login information for database creation
     conn = psycopg2.connect(**settings.admin_db.get_connection_dict())
@@ -98,28 +86,15 @@ def create_database(db_name):
         conn.close()
 
 
-def enable_pgvector_extension(conn):
-    """
-    Enable the pgvector extension in the PostgreSQL database.
-    
-    Args:
-        conn (psycopg2.connection): Database connection
-    """
+def enable_pgvector_extension(conn) -> None:
+    """Enable the pgvector extension in the PostgreSQL database."""
     with conn.cursor() as cur:
         cur.execute(CREATE_EXTENSION_QUERY)
         print("✅ pgvector extension enabled (if not already).")
 
 
-def create_tables(conn):
-    """
-    Create necessary tables with pgvector support and metadata validation.
-    
-    Args:
-        conn (psycopg2.connection): Database connection
-        
-    Note:
-        This creates both the validation function and the chunks table
-    """
+def create_tables(conn) -> None:
+    """Create necessary tables with pgvector support and metadata validation."""
     with conn.cursor() as cur:
         # First create the validation function
         cur.execute(CREATE_METADATA_CHECK)
@@ -128,18 +103,17 @@ def create_tables(conn):
         print("✅ Tables created successfully with pgvector support and metadata validation!")
 
 
-def insert_chunk(conn, text, vector, metadata):
-    """
-    Insert a new chunk into the database.
+def insert_chunk(conn, text, vector, metadata) -> int:
+    """Insert a new chunk into the database.
     
     Args:
-        conn (psycopg2.connection): Database connection
-        text (str): Chunk text content
-        vector (list): Embedding vector (3072 dimensions)
-        metadata (dict or str): Metadata as dictionary or JSON string
+        conn: Database connection
+        text: Chunk text content
+        vector: Embedding vector (3072 dimensions)
+        metadata: Metadata as dictionary, Pydantic model, or JSON string
         
     Returns:
-        int: The ID of the inserted chunk
+        The ID of the inserted chunk
         
     Raises:
         ValueError: If vector is None
@@ -165,15 +139,14 @@ def insert_chunk(conn, text, vector, metadata):
         return chunk_id
 
 def bulk_validate_and_insert_chunks(conn, chunks: list[dict]) -> list[int]:
-    """
-    Validate and insert multiple chunks in a single transaction.
+    """Validate and insert multiple chunks in a single transaction.
     
     Args:
-        conn (psycopg2.connection): Database connection
-        chunks (list[dict]): List of dictionaries containing text, vector, and metadata
+        conn: Database connection
+        chunks: List of dictionaries containing text, vector, and metadata
         
     Returns:
-        list[int]: List of inserted chunk IDs
+        List of inserted chunk IDs
         
     Raises:
         Exception: If validation or insertion fails
@@ -205,17 +178,16 @@ def bulk_validate_and_insert_chunks(conn, chunks: list[dict]) -> list[int]:
         raise
 
 
-def search_similar_chunks(conn, query_text: str, limit: int = 5):
-    """
-    Search for chunks similar to the query text using vector similarity.
+def search_similar_chunks(conn, query_text: str, limit: int = 5) -> list[dict]:
+    """Search for chunks similar to the query text using vector similarity.
     
     Args:
-        conn (psycopg2.connection): Database connection
-        query_text (str): The text to find similar chunks for
-        limit (int, optional): Maximum number of results to return. Defaults to 5.
+        conn: Database connection
+        query_text: The text to find similar chunks for
+        limit: Maximum number of results to return (default: 5)
         
     Returns:
-        list[dict]: List of dictionaries containing text, metadata, and similarity score
+        List of dictionaries containing text, metadata, and similarity score
     """
     # Generate embedding for the query text
     query_embedding = get_embedding(query_text)
@@ -248,17 +220,13 @@ def search_similar_chunks(conn, query_text: str, limit: int = 5):
         return similar_chunks
 
 def inspect_database():
-    """
-    Inspect the database structure and content.
+    """Inspect the database structure and content.
     
-    This function:
-    1. Opens a connection to the database
-    2. Queries the number of rows in the chunks table
-    3. Gets the column names and data types of the chunks table
-    4. Examines the metadata fields used in the table
-    
-    Note:
-        This is primarily a diagnostic function for development and debugging
+    Queries and displays:
+    - Number of rows in the chunks table
+    - Column names and data types
+    - Metadata fields used in the table
+    - Sample metadata record
     """
     import json
     

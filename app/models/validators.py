@@ -27,8 +27,7 @@ def validate_chunk(chunk_data: dict) -> Chunks:
     print(f"  • Vector dimensions: {len(validated.vector)}")
     
     # Get metadata field names from the Pydantic model
-    metadata_fields = validated.metadata.model_dump().keys()  # For Pydantic v2
-    # If using Pydantic v1, use: metadata_fields = validated.metadata.dict().keys()
+    metadata_fields = validated.metadata.model_dump().keys() 
     
     print(f"  • Metadata fields: {list(metadata_fields)}")
     
