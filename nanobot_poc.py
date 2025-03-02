@@ -2,147 +2,105 @@ import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
 from app.database.std_sql_db import get_connection
+from app.utils.openai_embedding import get_embedding
+# import json
+import psycopg2.extras
 
 load_dotenv()
 
 client = OpenAI()
 
-
-
-def get_context_from_db(query: str):
-    """Get the context for the query"""
-    pass
-
-def get_chat_response(messages, context: str) -> str:
+def get_context_from_db(query: str, limit: int = 5):
+    """
+    Get relevant context from the database based on the query
     
-    """Get streaming response from OpenAI API.
-
     Args:
-        messages: Chat history
-        context: Retrieved context from database
-
+        query: The user's question
+        limit: Maximum number of chunks to retrieve
+        
     Returns:
-        str: Model's response
+        List of relevant chunks with text, metadata, and similarity score
     """
-    system_prompt = f"""You are a helpful assistant that answers questions based on the provided context.
-    Use only the information from the context to answer questions. If you're unsure or the context
-    doesn't contain the relevant information, say so.
+    print(f"Searching for context related to: {query}")
     
-    Context:
-    {context}
-    """
-
-    messages_with_context = [{"role": "system", "content": system_prompt}, *messages]
-
-    # Create the streaming response
-    stream = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages_with_context,
-        temperature=0.7,
-        stream=True,
-    )
-
-    # Use Streamlit's built-in streaming capability
-    response = st.write_stream(stream)
-    return response
-
-
-
-
-
-#------------------------------------------------------------
-#               Initialize Streamlit App
-#------------------------------------------------------------
-st.title("🤖 Nanobot POC")
-
-
-# Initialize session state for chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-#------------------------------------------------------------
-#               initialize database connection
-#------------------------------------------------------------
-conn = get_connection()
-
-# Display chat messages
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# Chat input
-if prompt := st.chat_input("Ask a question about the document"):
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-
-    # Get relevant context
-    with st.status("Searching document...", expanded=False) as status:
-        context = get_context_from_db(prompt)
-        st.markdown(
+    # Get embedding for the query
+    query_embedding = get_embedding(query)
+    
+    # Connect to the database
+    conn = get_connection()
+    
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            # Search for similar chunks using cosine similarity
+            search_query = """
+                SELECT 
+                    text,
+                    metadata,
+                    1 - (vector <=> %s::vector) as similarity
+                FROM chunks
+                WHERE 1 - (vector <=> %s::vector) > 0.7  -- Similarity threshold
+                ORDER BY similarity DESC
+                LIMIT %s;
             """
-            <style>
-            .search-result {
-                margin: 10px 0;
-                padding: 10px;
-                border-radius: 4px;
-                background-color: #f0f2f6;
-            }
-            .search-result summary {
-                cursor: pointer;
-                color: #0f52ba;
-                font-weight: 500;
-            }
-            .search-result summary:hover {
-                color: #1e90ff;
-            }
-            .metadata {
-                font-size: 0.9em;
-                color: #666;
-                font-style: italic;
-            }
-            </style>
-        """,
-            unsafe_allow_html=True,
-        )
+            cur.execute(search_query, (query_embedding, query_embedding, limit))
+            results = cur.fetchall()
+            
+            # Format results
+            context_chunks = []
+            for row in results:
+                # Parse metadata from JSONB if needed
+                metadata = row['metadata']
+                
+                chunk = {
+                    "text": row['text'],
+                    "metadata": metadata,
+                    "similarity": row['similarity']
+                }
+                context_chunks.append(chunk)
+            
+            print(f"Found {len(context_chunks)} relevant chunks")
+            return context_chunks
+    except Exception as e:
+        print(f"Error retrieving context: {e}")
+        return []
+    finally:
+        conn.close()
 
-        st.write("Found relevant sections:")
-        for chunk in context.split("\n\n"):
-            # Split into text and metadata parts
-            parts = chunk.split("\n")
-            text = parts[0]
-            metadata = {
-                line.split(": ")[0]: line.split(": ")[1]
-                for line in parts[1:]
-                if ": " in line
-            }
-
-            source = metadata.get("Source", "Unknown source")
-            title = metadata.get("Title", "Untitled section")
-
-            st.markdown(
-                f"""
-                <div class="search-result">
-                    <details>
-                        <summary>{source}</summary>
-                        <div class="metadata">Section: {title}</div>
-                        <div style="margin-top: 8px;">{text}</div>
-                    </details>
-                </div>
-            """,
-                unsafe_allow_html=True,
-            )
-
-    # Display assistant response first
-    with st.chat_message("assistant"):
-        # Get model response with streaming
-        response = get_chat_response(st.session_state.messages, context)
-
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-
+# Test the function
+if __name__ == "__main__":
+    st.title("Nanobot POC")
+    
+    # Simple chat interface
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    
+    # Display chat history
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Get user input
+    if prompt := st.chat_input("What would you like to know?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Display user message
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Get context from database
+        with st.spinner("Searching knowledge base..."):
+            context_chunks = get_context_from_db(prompt)
+        
+        # Display context (for debugging)
+        if st.checkbox("Show retrieved context"):
+            st.write(context_chunks)
+        
+        # TODO: Next step will be to implement get_chat_response function
+        # that uses this context to generate a response
+        
+        # For now, just acknowledge the query
+        with st.chat_message("assistant"):
+            response = f"I found {len(context_chunks)} relevant pieces of information in the database."
+            st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})

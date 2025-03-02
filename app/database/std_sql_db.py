@@ -1,20 +1,8 @@
-# import os
 import psycopg2
-from dotenv import load_dotenv
 import json
 from app.utils.openai_embedding import get_embedding
 from app.models.validators import validate_chunk
 from app.config.settings import settings
-
-load_dotenv()
-
-# DATABASE_CONFIG = {
-#     "dbname": os.getenv("LOCAL_DB_NAME"),
-#     "user": os.getenv("LOCAL_DB_USER"),
-#     "password": os.getenv("LOCAL_DB_PASSWORD"),
-#     "host": os.getenv("LOCAL_DB_HOST"),
-#     "port": os.getenv("LOCAL_DB_PORT")
-# }
 
 CREATE_EXTENSION_QUERY = """
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -45,7 +33,7 @@ CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS chunks (
     id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
-    vector VECTOR(3072),
+    vector VECTOR(3072) NOT NULL,
     metadata JSONB NOT NULL,
     CONSTRAINT valid_metadata CHECK (validate_chunk_metadata(metadata))
 );
@@ -57,13 +45,6 @@ INSERT_CHUNK_QUERY = """
     RETURNING id;
 """
 
-# def get_connection():
-#     """Establish database connection."""
-#     try:
-#         return psycopg2.connect(**DATABASE_CONFIG)
-#     except psycopg2.Error as e:
-#         print(f"Error connecting to database: {e}")
-#         raise
 def get_connection():
     """Establish database connection."""
     try:
@@ -74,14 +55,7 @@ def get_connection():
 
 def create_database(db_name):
     """Create a new database in PostgreSQL."""
-    # ADMIN_DATABASE_CONFIG = {
-    #     "dbname": os.getenv("LOCAL_DB_ADMIN_NAME"),
-    #     "user": os.getenv("LOCAL_DB_ADMIN_USER"),
-    #     "password": os.getenv("LOCAL_DB_ADMIN_PASSWORD"),
-    #     "host": os.getenv("LOCAL_DB_ADMIN_HOST"),
-    #     "port": os.getenv("LOCAL_DB_ADMIN_PORT")
-    # }
-    # conn = psycopg2.connect(**ADMIN_DATABASE_CONFIG)
+    # this will be using the admin login information
     conn = psycopg2.connect(**settings.admin_db.get_connection_dict())
     conn.autocommit = True  
     cur = conn.cursor()
@@ -121,10 +95,14 @@ def insert_chunk(conn, text, vector, metadata):
         conn: Database connection
         text: Chunk text
         vector: Embedding vector
-        metadata: JSON metadata
+        metadata: Metadata object or dictionary
     Returns:
         int: The ID of the inserted chunk
     """
+    # Serialize metadata if it's not already a string
+    if not isinstance(metadata, str):
+        metadata = json.dumps(metadata)
+        
     with conn.cursor() as cur:
         cur.execute(INSERT_CHUNK_QUERY, (text, vector, metadata))
         chunk_id = cur.fetchone()[0]
