@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Any, Dict
+from typing import List
 
 
 class ChunkMetadata(BaseModel):
