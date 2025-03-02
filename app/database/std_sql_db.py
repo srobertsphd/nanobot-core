@@ -293,6 +293,8 @@ def inspect_database() -> None:
     except Exception as e:
         print(f"❌ Error during database inspection: {e}")
 
+
+
 # Execute the inspection function if this module is run directly
 if __name__ == "__main__":
     inspect_database()

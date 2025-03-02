@@ -1,44 +1,14 @@
 import streamlit as st
 from openai import OpenAI
 from app.database.std_sql_db import get_connection, search_similar_chunks
-from app.config.settings import settings
 import jinja2
-import os
-
+from app.config.settings import settings
 
 client = OpenAI()
 
 # Set up Jinja2 environment
 template_loader = jinja2.FileSystemLoader(searchpath="app/prompts/templates")
 template_env = jinja2.Environment(loader=template_loader)
-
-def get_context_from_db(query: str, limit: int = 5):
-    """
-    Get relevant context from the database based on the query
-    
-    Args:
-        query: The user's question
-        limit: Maximum number of chunks to retrieve
-        
-    Returns:
-        List of relevant chunks with text, metadata, and similarity score
-    """
-    print(f"Searching for context related to: {query}")
-    
-    # Connect to the database
-    conn = get_connection()
-    
-    try:
-        # Use the existing search_similar_chunks function
-        context_chunks = search_similar_chunks(conn, query, limit)
-        
-        print(f"Found {len(context_chunks)} relevant chunks")
-        return context_chunks
-    except Exception as e:
-        print(f"Error retrieving context: {e}")
-        return []
-    finally:
-        conn.close()
 
 def get_chat_response(prompt: str, context_chunks: list) -> str:
     """
@@ -59,11 +29,8 @@ def get_chat_response(prompt: str, context_chunks: list) -> str:
             context_text += f"Source: {chunk['metadata'].get('source', 'Unknown')}\n\n"
     
     # Load and render the system prompt template
-    try:
-        template = template_env.get_template("rag_system_prompt.j2")
-        system_message = template.render(context_text=context_text)
-    except Exception as e:
-        print(f"Error loading template: {e}")
+    template = template_env.get_template("rag_system_prompt.j2")
+    system_message = template.render(context_text=context_text)
     
     try:
         # Print the model being used
@@ -77,7 +44,7 @@ def get_chat_response(prompt: str, context_chunks: list) -> str:
                 {"role": "user", "content": prompt}
             ],
             temperature=settings.openai.temperature,
-            max_tokens=settings.openai.chat_max_tokens  # Use the chat-specific max tokens setting
+            max_tokens=settings.openai.chat_max_tokens
         )
         
         # Extract and return the response text
@@ -110,7 +77,17 @@ if __name__ == "__main__":
         
         # Get context from database
         with st.spinner("Searching knowledge base..."):
-            context_chunks = get_context_from_db(prompt)
+            # Connect to the database
+            conn = get_connection()
+            try:
+                # Use search_similar_chunks directly
+                context_chunks = search_similar_chunks(conn, prompt, limit=5)
+                print(f"Found {len(context_chunks)} relevant chunks")
+            except Exception as e:
+                print(f"Error retrieving context: {e}")
+                context_chunks = []
+            finally:
+                conn.close()
         
         # Display context information
         st.info(f"Found {len(context_chunks)} relevant chunks of information")
