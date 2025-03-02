@@ -7,6 +7,7 @@ It handles database connection, table creation, and vector-based operations.
 """
 
 import psycopg2
+import psycopg2.extras # needed for the DictCursor and cursor_factory
 import json
 from app.utils.openai_embedding import get_embedding
 from app.models.validators import validate_chunk
@@ -57,7 +58,7 @@ INSERT_CHUNK_QUERY = """
     RETURNING id;
 """
 
-def get_connection() -> psycopg2.connection:
+def get_connection() -> psycopg2.connect: 
     """Connect to the PostgreSQL database using settings configuration."""
     try:
         return psycopg2.connect(**settings.local_db.get_connection_dict())
@@ -197,29 +198,29 @@ def search_similar_chunks(conn, query_text: str, limit: int = 5) -> list[dict]:
         SELECT 
             text,
             metadata,
-            1 - (vector <=> %s::vector) as similarity
+            (1 - (vector <#> %s::vector)) as similarity
         FROM chunks
         ORDER BY similarity DESC
         LIMIT %s;
     """
     
-    with conn.cursor() as cur:
+    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
         cur.execute(search_query, (query_embedding, limit))
         results = cur.fetchall()
         
         # Format results as dictionaries
         similar_chunks = [
             {
-                "text": row[0],
-                "metadata": row[1],
-                "similarity": row[2]
+                "text": row['text'],
+                "metadata": row['metadata'],
+                "similarity": row['similarity']
             }
             for row in results
         ]
         
         return similar_chunks
 
-def inspect_database():
+def inspect_database() -> None:
     """Inspect the database structure and content.
     
     Queries and displays:
@@ -229,16 +230,17 @@ def inspect_database():
     - Sample metadata record
     """
     import json
+    import psycopg2.extras  # Add this import
     
     try:
         # Open connection
         conn = get_connection()
         print("✅ Connected to database successfully")
         
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             # Get row count
             cur.execute("SELECT COUNT(*) FROM chunks")
-            row_count = cur.fetchone()[0]
+            row_count = cur.fetchone()[0]  # This still works with DictCursor
             print(f"📊 Table contains {row_count} rows")
             
             # Get column names and types
@@ -251,7 +253,7 @@ def inspect_database():
             columns = cur.fetchall()
             print("\n📋 Table columns:")
             for col in columns:
-                print(f"  • {col[0]} ({col[1]})")
+                print(f"  • {col['column_name']} ({col['data_type']})")
             
             # Get metadata fields if table has data
             if row_count > 0:
@@ -266,7 +268,7 @@ def inspect_database():
                 all_keys = set()
                 for row in metadata_samples:
                     # Handle both string and dict formats
-                    md = row[0]
+                    md = row['metadata']
                     if isinstance(md, str):
                         md = json.loads(md)
                     
@@ -278,7 +280,7 @@ def inspect_database():
                 
                 # Show a complete metadata example
                 print("\n📝 Sample metadata record:")
-                sample = metadata_samples[0][0]
+                sample = metadata_samples[0]['metadata']
                 if isinstance(sample, str):
                     sample = json.loads(sample)
                 

@@ -1,3 +1,10 @@
+"""
+Data Validation Functions
+
+This module provides functions for validating data structures before
+they are processed or stored in the database.
+"""
+
 from .db_schemas import Chunks
 
 

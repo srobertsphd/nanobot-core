@@ -1,12 +1,7 @@
 import streamlit as st
 from openai import OpenAI
-from dotenv import load_dotenv
-from app.database.std_sql_db import get_connection
-from app.utils.openai_embedding import get_embedding
-# import json
-import psycopg2.extras
+from app.database.std_sql_db import get_connection, search_similar_chunks
 
-load_dotenv()
 
 client = OpenAI()
 
@@ -23,43 +18,15 @@ def get_context_from_db(query: str, limit: int = 5):
     """
     print(f"Searching for context related to: {query}")
     
-    # Get embedding for the query
-    query_embedding = get_embedding(query)
-    
     # Connect to the database
     conn = get_connection()
     
     try:
-        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            # Search for similar chunks using cosine similarity
-            search_query = """
-                SELECT 
-                    text,
-                    metadata,
-                    1 - (vector <=> %s::vector) as similarity
-                FROM chunks
-                WHERE 1 - (vector <=> %s::vector) > 0.7  -- Similarity threshold
-                ORDER BY similarity DESC
-                LIMIT %s;
-            """
-            cur.execute(search_query, (query_embedding, query_embedding, limit))
-            results = cur.fetchall()
-            
-            # Format results
-            context_chunks = []
-            for row in results:
-                # Parse metadata from JSONB if needed
-                metadata = row['metadata']
-                
-                chunk = {
-                    "text": row['text'],
-                    "metadata": metadata,
-                    "similarity": row['similarity']
-                }
-                context_chunks.append(chunk)
-            
-            print(f"Found {len(context_chunks)} relevant chunks")
-            return context_chunks
+        # Use the existing search_similar_chunks function
+        context_chunks = search_similar_chunks(conn, query, limit)
+        
+        print(f"Found {len(context_chunks)} relevant chunks")
+        return context_chunks
     except Exception as e:
         print(f"Error retrieving context: {e}")
         return []
@@ -92,9 +59,28 @@ if __name__ == "__main__":
         with st.spinner("Searching knowledge base..."):
             context_chunks = get_context_from_db(prompt)
         
-        # Display context (for debugging)
-        if st.checkbox("Show retrieved context"):
-            st.write(context_chunks)
+        # Display context information
+        st.info(f"Found {len(context_chunks)} relevant chunks of information")
+        
+        # Display context details (expandable)
+        with st.expander("View retrieved context", expanded=False):
+            if context_chunks:
+                for i, chunk in enumerate(context_chunks):
+                    st.markdown(f"**Chunk {i+1}** (Similarity: {chunk['similarity']:.4f})")
+                    st.markdown(f"```\n{chunk['text']}\n```")
+                    
+                    # Display metadata in a more readable format
+                    if 'metadata' in chunk:
+                        metadata = chunk['metadata']
+                        st.markdown("**Metadata:**")
+                        for key, value in metadata.items():
+                            st.markdown(f"- **{key}**: {value}")
+                    
+                    # Add a separator between chunks
+                    if i < len(context_chunks) - 1:
+                        st.divider()
+            else:
+                st.warning("No relevant information found in the database.")
         
         # TODO: Next step will be to implement get_chat_response function
         # that uses this context to generate a response
