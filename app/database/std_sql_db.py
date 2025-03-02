@@ -9,7 +9,7 @@ It handles database connection, table creation, and vector-based operations.
 import psycopg2
 import psycopg2.extras # needed for the DictCursor and cursor_factory
 import json
-from app.utils.openai_embedding import get_embedding
+from app.services.openai_service import get_embedding
 from app.models.validators import validate_chunk
 from app.config.settings import settings
 

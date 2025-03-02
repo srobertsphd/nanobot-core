@@ -1,0 +1,83 @@
+"""
+OpenAI Service Module
+
+This module provides a centralized interface for all OpenAI API calls,
+including chat completions and embeddings.
+"""
+
+from openai import OpenAI
+import jinja2
+from app.config.settings import settings
+
+# Initialize the OpenAI client
+client = OpenAI(api_key=settings.openai.api_key)
+
+# Set up Jinja2 environment for templates
+template_loader = jinja2.FileSystemLoader(searchpath="app/prompts/templates")
+template_env = jinja2.Environment(loader=template_loader)
+
+def get_embedding(text: str) -> list[float]:
+    """
+    Get an embedding vector for a text string using OpenAI's embedding model.
+    
+    Args:
+        text (str): The text to embed
+        
+    Returns:
+        list[float]: The embedding vector
+    """
+    # Normalize text by replacing newlines with spaces
+    text = text.replace("\n", " ")
+    
+    response = client.embeddings.create(
+        input=[text],
+        model=settings.openai.embedding_model
+    )
+    
+    # Extract the embedding vector from the response
+    embedding = response.data[0].embedding
+    
+    return embedding
+
+def get_chat_response(prompt: str, context_chunks: list) -> str:
+    """
+    Generate a response using OpenAI's chat completion API with retrieved context
+    
+    Args:
+        prompt: The user's question
+        context_chunks: List of relevant chunks from the database
+        
+    Returns:
+        Generated response from the model
+    """
+    # Prepare context text from chunks
+    context_text = ""
+    for chunk in context_chunks:
+        context_text += f"{chunk['text']}\n\n"
+        if 'metadata' in chunk:
+            context_text += f"Source: {chunk['metadata'].get('source', 'Unknown')}\n\n"
+    
+    # Load and render the system prompt template
+    template = template_env.get_template("rag_system_prompt.j2")
+    system_message = template.render(context_text=context_text)
+    
+    try:
+        # Print the model being used
+        print(f"Using model: {settings.openai.model}")
+        
+        # Call OpenAI API using settings from config
+        response = client.chat.completions.create(
+            model=settings.openai.model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=settings.openai.temperature,
+            max_tokens=settings.openai.chat_max_tokens
+        )
+        
+        # Extract and return the response text
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return f"Sorry, I encountered an error while generating a response: {str(e)}" 

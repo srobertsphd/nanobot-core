@@ -1,6 +1,6 @@
 # from app.config.settings import settings # to activate the settings singleton
 from app.database.std_sql_db import get_connection, search_similar_chunks, insert_chunk
-from app.utils.openai_embedding import get_embedding
+from app.services.openai_service import get_embedding
 
 import pytest
 import json
