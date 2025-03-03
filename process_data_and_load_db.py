@@ -19,16 +19,25 @@ from app.database.std_sql_db import (
 )
 
 
-def process_document(doc_path: str):
+def process_document(doc_path: str, chunking_strategy: str = "default"):
+    """Process a document with the specified chunking strategy.
+    
+    Args:
+        doc_path: Path to the document file
+        chunking_strategy: Chunking strategy to use
+        
+    Returns:
+        List of processed chunks with embeddings
+    """
     print(f"Docling is now converting {doc_path}...")
     result = simple_docling_convert(doc_path)
     print("saving docling and md...")
     save_docling_and_md(doc_path, result)
     print(f"the type of the result is {type(result)}")
-    print("Now chunking document...")
-    chunks = chunk_document(result)
+    print(f"Now chunking document using '{chunking_strategy}' strategy...")
+    chunks = chunk_document(result, strategy=chunking_strategy)
     print("Now processing chunks...")
-    processed_chunks = process_chunks(chunks)
+    processed_chunks = process_chunks(chunks, chunking_strategy=chunking_strategy)
     print("Now getting embeddings for chunks...")
     processed_chunks_with_embeddings = get_embeddings_for_chunk_text(processed_chunks)
     print(f"Done! Returning {len(processed_chunks_with_embeddings)} chunks with embeddings")
