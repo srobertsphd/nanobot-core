@@ -159,10 +159,14 @@ def bulk_validate_and_insert_chunks(conn, chunks: list[dict]) -> list[int]:
             for chunk in chunks:
                 # Validate each chunk using the Pydantic model
                 validated_chunk = validate_chunk(chunk)
+                
+                # Convert Pydantic model to dictionary before JSON serialization
+                metadata_dict = validated_chunk.metadata.model_dump()
+                
                 cur.execute(INSERT_CHUNK_QUERY, (
                     validated_chunk.text,
                     validated_chunk.vector,
-                    json.dumps(validated_chunk.metadata)
+                    json.dumps(metadata_dict)  # Now this will work
                 ))
                 chunk_id = cur.fetchone()[0]
                 chunk_ids.append(chunk_id)
@@ -219,82 +223,4 @@ def search_similar_chunks(conn, query_text: str, limit: int = 5) -> list[dict]:
         ]
         
         return similar_chunks
-
-def inspect_database() -> None:
-    """Inspect the database structure and content.
     
-    Queries and displays:
-    - Number of rows in the chunks table
-    - Column names and data types
-    - Metadata fields used in the table
-    - Sample metadata record
-    """
-    import json
-    import psycopg2.extras  # Add this import
-    
-    try:
-        # Open connection
-        conn = get_connection()
-        print("✅ Connected to database successfully")
-        
-        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            # Get row count
-            cur.execute("SELECT COUNT(*) FROM chunks")
-            row_count = cur.fetchone()[0]  # This still works with DictCursor
-            print(f"📊 Table contains {row_count} rows")
-            
-            # Get column names and types
-            cur.execute("""
-                SELECT column_name, data_type 
-                FROM information_schema.columns 
-                WHERE table_name = 'chunks'
-                ORDER BY ordinal_position
-            """)
-            columns = cur.fetchall()
-            print("\n📋 Table columns:")
-            for col in columns:
-                print(f"  • {col['column_name']} ({col['data_type']})")
-            
-            # Get metadata fields if table has data
-            if row_count > 0:
-                cur.execute("""
-                    SELECT metadata 
-                    FROM chunks 
-                    LIMIT 10
-                """)
-                metadata_samples = cur.fetchall()
-                
-                # Collect all unique metadata keys
-                all_keys = set()
-                for row in metadata_samples:
-                    # Handle both string and dict formats
-                    md = row['metadata']
-                    if isinstance(md, str):
-                        md = json.loads(md)
-                    
-                    all_keys.update(md.keys())
-                
-                print("\n🔑 Metadata fields found in samples:")
-                for key in sorted(all_keys):
-                    print(f"  • {key}")
-                
-                # Show a complete metadata example
-                print("\n📝 Sample metadata record:")
-                sample = metadata_samples[0]['metadata']
-                if isinstance(sample, str):
-                    sample = json.loads(sample)
-                
-                for key, value in sample.items():
-                    print(f"  • {key}: {value}")
-            
-        conn.close()
-        print("\n✅ Database inspection complete")
-        
-    except Exception as e:
-        print(f"❌ Error during database inspection: {e}")
-
-
-
-# Execute the inspection function if this module is run directly
-if __name__ == "__main__":
-    inspect_database()

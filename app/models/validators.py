@@ -17,9 +17,6 @@ def validate_chunk(chunk_data: dict) -> Chunks:
         
     Returns:
         Chunks: Validated chunk model
-        
-    Raises:
-        ValidationError: If data is invalid
     """
     if not chunk_data:
         raise ValueError("Chunk data is required")

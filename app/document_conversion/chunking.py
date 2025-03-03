@@ -5,17 +5,11 @@ This module provides functions for chunking documents and processing
 the resulting chunks for embedding and storage.
 """
 from docling_core.transforms.chunker.hierarchical_chunker import DocChunk
-# from openai import OpenAI
-from app.utils.tokenizer import OpenAITokenizerWrapper
 from app.services.openai_service import get_embedding
-from app.config.settings import settings
 from app.services.chunking_service import ChunkingService
 
-# client = OpenAI(api_key=settings.openai.api_key)
 
-tokenizer = OpenAITokenizerWrapper()
-MAX_TOKENS = settings.openai.embedding_max_tokens  # Use the correct setting name for embeddings
-chunking_service = ChunkingService()
+chunking_service = ChunkingService() #an instance of the ChunkingService class
 
 def chunk_document(result, strategy="default") -> list[DocChunk]:
     """Chunk the document using docling with the specified strategy.
@@ -57,8 +51,8 @@ def process_chunks(chunks, chunking_strategy="default") -> list[dict]:
                     )
                 ]
                 or None,
-                "title": chunk.meta.headings[0] if chunk.meta.headings else None,
-                "headings": chunk.meta.headings if hasattr(chunk.meta, 'headings') else [],
+                "title": chunk.meta.headings[0] if chunk.meta.headings else None,  # Primary heading
+                "headings": chunk.meta.headings if hasattr(chunk.meta, 'headings') else [],  # All relevant headings
                 "chunking_strategy": chunking_strategy,
             },
         }
@@ -68,9 +62,16 @@ def process_chunks(chunks, chunking_strategy="default") -> list[dict]:
 
 
 def get_embeddings_for_chunk_text(processed_chunks):
+    """
+    Get embeddings for the text in the processed chunks.
+
+    Args:
+        processed_chunks (list): A list of dictionaries containing processed chunks.
+
+    Returns:
+        list: A list of dictionaries containing processed chunks with embeddings.
+    """
     for chunk in processed_chunks:
         vector = get_embedding(chunk.get('text'))
         chunk['vector'] = vector
     return processed_chunks
-
-

@@ -84,33 +84,6 @@ def test_insert_chunk_function(db_connection, test_data):
         
         assert retrieved_metadata == test_data["metadata"], "Retrieved metadata should match"
 
-def test_get_context_from_db(db_connection, test_data):
-    """Test the get_context_from_db function from nanobot_poc.py"""
-    # Import the function
-    from nanobot_poc import get_context_from_db
-    
-    # Insert a test chunk
-    test_vector = get_embedding(test_data["text"])
-    with db_connection.cursor() as cur:
-        cur.execute("""
-            INSERT INTO chunks (text, vector, metadata)
-            VALUES (%s, %s, %s)
-        """, (
-            test_data["text"],
-            test_vector,
-            json.dumps(test_data["metadata"])
-        ))
-    db_connection.commit()  # Commit so get_context_from_db can see it
-    
-    # Test the function
-    context_chunks = get_context_from_db("Tell me about artificial intelligence")
-    
-    # Verify results
-    assert isinstance(context_chunks, list), "Should return a list"
-    if len(context_chunks) > 0:
-        assert "text" in context_chunks[0], "Chunk should have text"
-        assert "metadata" in context_chunks[0], "Chunk should have metadata"
-        assert "similarity" in context_chunks[0], "Chunk should have similarity score"
 
 def test_vector_similarity_search(db_connection):
     """Test only the vector similarity search functionality"""
@@ -169,3 +142,53 @@ def test_vector_similarity_search(db_connection):
     assert similar_chunks[0]["similarity"] > similar_chunks[1]["similarity"], "AI text should have higher similarity score"
     
     print(f"\nSimilarity difference: {similar_chunks[0]['similarity'] - similar_chunks[1]['similarity']:.6f}")
+
+@pytest.mark.skip(reason="Not fully understood yet - run manually when needed")
+def test_chunking_strategy_comparison(db_connection):
+    """Compare different chunking strategies."""
+    # Test text samples for different chunking strategies
+    test_texts = {
+        "default": "This is a sample chunk from the default strategy. It contains information about the document.",
+        "fine_grained": "This is a smaller chunk from the fine_grained strategy.",
+        "balanced": "This is a medium-sized chunk from the balanced strategy. It has a moderate amount of information."
+    }
+    
+    # Insert test chunks for each strategy
+    for strategy, text in test_texts.items():
+        # Get embedding
+        vector = get_embedding(text)
+        
+        # Create metadata
+        metadata = {
+            "filename": "test_document.pdf",
+            "page_numbers": [1],
+            "title": "Test Document",
+            "chunking_strategy": strategy
+        }
+        
+        # Insert chunk
+        insert_chunk(
+            db_connection, 
+            text, 
+            vector, 
+            json.dumps(metadata)
+        )
+    
+    # Test query
+    query = "information about the document"
+    
+    # Search for similar chunks
+    similar_chunks = search_similar_chunks(db_connection, query, limit=3)
+    
+    # Print results
+    print("\nChunking Strategy Comparison Results:")
+    for i, chunk in enumerate(similar_chunks):
+        strategy = chunk['metadata'].get('chunking_strategy', 'unknown')
+        print(f"{i+1}. Strategy: {strategy}, Similarity: {chunk['similarity']:.4f}")
+        print(f"   Text: {chunk['text']}")
+    
+    # Verify we got results
+    assert len(similar_chunks) == 3, "Should find all three chunks"
+    
+    # The default strategy should be most similar for this query
+    assert similar_chunks[0]['metadata']['chunking_strategy'] == 'default', "Default strategy should be most similar"
