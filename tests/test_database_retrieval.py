@@ -8,14 +8,28 @@ import json
 
 @pytest.fixture
 def db_connection():
-    """Provide a database connection for tests"""
+    """Provide a database connection for tests with automatic rollback."""
     # === SETUP PHASE ===
     conn = get_connection()
+    
+    # Ensure we're in a clean state
+    conn.autocommit = True
+    
+    # Start a new transaction
     conn.autocommit = False
+    
+    # Create a savepoint at the beginning of the test
+    with conn.cursor() as cur:
+        cur.execute("SAVEPOINT test_start")
     
     yield conn
     
     # === TEARDOWN PHASE ===
+    # Roll back to the savepoint
+    with conn.cursor() as cur:
+        cur.execute("ROLLBACK TO SAVEPOINT test_start")
+    
+    # Roll back the entire transaction and close
     conn.rollback()
     conn.close()
 
