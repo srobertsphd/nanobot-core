@@ -2,13 +2,13 @@ from docling.chunking import HybridChunker
 from docling_core.transforms.chunker.hierarchical_chunker import DocChunk
 from openai import OpenAI
 from app.utils.tokenizer import OpenAITokenizerWrapper
-from app.utils.openai_embedding import get_embedding
+from app.services.openai_service import get_embedding
 from app.config.settings import settings
 
 client = OpenAI(api_key=settings.openai.api_key)
 
 tokenizer = OpenAITokenizerWrapper()
-MAX_TOKENS = settings.openai.max_tokens # max tokens for text-embeddding-3-large max context window
+MAX_TOKENS = settings.openai.embedding_max_tokens  # Use the correct setting name for embeddings
 
 
 

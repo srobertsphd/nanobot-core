@@ -55,3 +55,14 @@ class OpenAITokenizerWrapper(PreTrainedTokenizerBase):
             "input_ids": tokens,
             "attention_mask": [1] * len(tokens)
         }
+    
+    def count_tokens(self, text: str) -> int:
+        """Count the number of tokens in a text string
+        
+        Args:
+            text: The text to tokenize
+            
+        Returns:
+            The number of tokens in the text
+        """
+        return len(self.tokenizer.encode(text))
