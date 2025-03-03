@@ -24,10 +24,19 @@ from app.database.std_sql_db import (
 DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"
 
 # TODO need to add the chunking strategy to the process_document function
-def process_file(conn, file_path):
-    """Process a single file and load it into the database."""
-    print(f"\n=== Processing {file_path} ===")
-    chunks_with_embeddings = process_document(file_path)
+def process_file(conn, file_path, chunking_strategy="default"):
+    """Process a single file and load it into the database.
+    
+    Args:
+        conn: Database connection
+        file_path: Path to the file to process
+        chunking_strategy: Strategy to use for chunking (default, balanced, fine_grained, etc.)
+    
+    Returns:
+        Number of chunks inserted into the database
+    """
+    print(f"\n=== Processing {file_path} with '{chunking_strategy}' strategy ===")
+    chunks_with_embeddings = process_document(file_path, chunking_strategy=chunking_strategy)
     id_list = bulk_validate_and_insert_chunks(conn, chunks_with_embeddings)
     print(f"Inserted {len(id_list)} chunks into database")
     return len(id_list)
@@ -38,9 +47,20 @@ def main():
     if len(sys.argv) < 2:
         print("Error: Missing argument")
         print("Usage:")
-        print("  python -m process_data_and_load_db file.pdf  # Process a single file")
-        print("  python -m process_data_and_load_db --all     # Process all files")
+        print("  python -m process_data_and_load_db file.pdf [--strategy STRATEGY]  # Process a single file")
+        print("  python -m process_data_and_load_db --all [--strategy STRATEGY]     # Process all files")
         return
+    
+    # Parse arguments
+    arg = sys.argv[1]
+    chunking_strategy = "default"
+    
+    # Check for strategy flag
+    if "--strategy" in sys.argv:
+        strategy_index = sys.argv.index("--strategy")
+        if strategy_index + 1 < len(sys.argv):
+            chunking_strategy = sys.argv[strategy_index + 1]
+            print(f"Using chunking strategy: {chunking_strategy}")
     
     # Initialize database
     conn = get_connection()
@@ -48,8 +68,6 @@ def main():
     create_tables(conn)
     
     # Process based on argument
-    arg = sys.argv[1]
-    
     if arg == "--all":
         # Process all files (explicit flag required)
         print(f"Processing all files in {DEFAULT_DOCS_DIR}")
@@ -63,7 +81,7 @@ def main():
         
         total_chunks = 0
         for file in files:
-            chunks = process_file(conn, file)
+            chunks = process_file(conn, file, chunking_strategy=chunking_strategy)
             total_chunks += chunks
             
         print(f"\nAll documents processed! Inserted {total_chunks} total chunks into database.")
@@ -75,7 +93,7 @@ def main():
             print(f"Error: File not found: {file_path}")
             return
             
-        process_file(conn, file_path)
+        process_file(conn, file_path, chunking_strategy=chunking_strategy)
         print("\nFile processing complete!")
 
 if __name__ == "__main__":
