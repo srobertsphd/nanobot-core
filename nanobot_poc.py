@@ -1,8 +1,7 @@
 import streamlit as st
 from app.database.db_common import get_connection
-from app.database.db_retrieval import search_similar_chunks_with_filters
+from app.database.db_retrieval import search_similar_chunks_with_filters, get_chunking_strategies, get_filenames
 from app.services.openai_service import get_chat_response
-from app.services.retrieval_service import get_chunking_strategies, get_filenames
 
 # Test the function
 if __name__ == "__main__":

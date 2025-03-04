@@ -152,3 +152,31 @@ def search_similar_chunks_with_filters(conn, query_text, limit=5, chunking_strat
             processed_results.append(result)
         
         return processed_results 
+
+def get_unique_metadata_values(conn, field_name):
+    """Retrieve unique values for a specific metadata field from the database."""
+    try:
+        cursor = conn.cursor()
+        # Use PostgreSQL JSON operators
+        query = f"""
+        SELECT DISTINCT metadata->>'{field_name}' as value
+        FROM chunks
+        WHERE metadata->>'{field_name}' IS NOT NULL
+        ORDER BY value
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+        # Extract values from results and filter out None values
+        values = [row[0] for row in results if row[0] is not None]
+        return values
+    except Exception as e:
+        print(f"Error retrieving metadata values for {field_name}: {e}")
+        return []
+
+def get_chunking_strategies(conn):
+    """Get available chunking strategies from the database."""
+    return get_unique_metadata_values(conn, "chunking_strategy")
+
+def get_filenames(conn):
+    """Get available filenames from the database."""
+    return get_unique_metadata_values(conn, "filename") 
