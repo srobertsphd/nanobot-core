@@ -16,6 +16,51 @@ from app.document_conversion.chunking import chunk_document, process_chunks, get
 from app.utils.file_handling import save_docling_and_md
 from app.database.std_sql_db import get_connection, bulk_validate_and_insert_chunks
 
+def convert_document(doc_path: str, save_intermediate: bool = True):
+    """Convert a document to docling format and optionally save intermediate files.
+    
+    This function handles only the document conversion step, allowing for
+    subsequent experimentation with different chunking strategies.
+    
+    Args:
+        doc_path: Path to the document file
+        save_intermediate: Whether to save intermediate docling and markdown files
+        
+    Returns:
+        The converted document result from docling
+    """
+    print(f"Docling is now converting {doc_path}...")
+    result = simple_docling_convert(doc_path)
+    
+    if save_intermediate:
+        print("Saving docling and md...")
+        save_docling_and_md(doc_path, result)
+    
+    print("Document conversion complete!")
+    return result
+
+def chunk_converted_document(converted_doc, chunking_strategy: str = "default"):
+    """Chunk a converted document using the specified strategy.
+    
+    This function takes a previously converted document and applies
+    the specified chunking strategy.
+    
+    Args:
+        converted_doc: The result from convert_document()
+        chunking_strategy: Chunking strategy to use
+        
+    Returns:
+        List of processed chunks (without embeddings)
+    """
+    print(f"Now chunking document using '{chunking_strategy}' strategy...")
+    chunks = chunk_document(converted_doc, strategy=chunking_strategy)
+    
+    print("Now processing chunks...")
+    processed_chunks = process_chunks(chunks, chunking_strategy=chunking_strategy)
+    
+    print(f"Done! Returning {len(processed_chunks)} chunks ready for preview")
+    return processed_chunks
+
 def process_document_for_preview(doc_path: str, chunking_strategy: str = "default", save_intermediate: bool = True):
     """Process a document and return chunks for preview before embedding.
     
@@ -30,21 +75,11 @@ def process_document_for_preview(doc_path: str, chunking_strategy: str = "defaul
     Returns:
         List of processed chunks (without embeddings)
     """
-    print(f"Docling is now converting {doc_path}...")
-    result = simple_docling_convert(doc_path)
+    # Convert document
+    converted_doc = convert_document(doc_path, save_intermediate)
     
-    if save_intermediate:
-        print("Saving docling and md...")
-        save_docling_and_md(doc_path, result)
-    
-    print(f"Now chunking document using '{chunking_strategy}' strategy...")
-    chunks = chunk_document(result, strategy=chunking_strategy)
-    
-    print("Now processing chunks...")
-    processed_chunks = process_chunks(chunks, chunking_strategy=chunking_strategy)
-    
-    print(f"Done! Returning {len(processed_chunks)} chunks ready for preview")
-    return processed_chunks
+    # Chunk the converted document
+    return chunk_converted_document(converted_doc, chunking_strategy)
 
 
 def embed_and_upload_chunks(chunks, conn=None):

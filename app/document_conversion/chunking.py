@@ -88,5 +88,6 @@ def get_available_chunking_strategies() -> dict:
         "default": "Standard chunking with moderate chunk size",
         "balanced": "Balanced approach between context preservation and chunk size",
         "fine_grained": "Smaller chunks for more precise retrieval",
-        "paragraph": "Chunk by paragraphs regardless of size"
+        "context": "Larger chunks that preserve more context for QA and summarization",
+        "hierarchical": "Chunks based on document's natural hierarchy and structure"
     }
