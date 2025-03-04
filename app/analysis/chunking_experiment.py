@@ -13,7 +13,8 @@ from typing import List, Dict, Any, Optional, Tuple
 
 from app.document_conversion.document_pipeline import convert_document, chunk_converted_document
 from app.document_conversion.chunking import get_embeddings_for_chunk_text, get_available_chunking_strategies
-from app.database.std_sql_db import get_connection, bulk_validate_and_insert_chunks
+from app.database.db_common import get_connection
+from app.database.db_insert import bulk_validate_and_insert_chunks
 
 
 class ChunkingExperiment:

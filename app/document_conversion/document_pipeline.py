@@ -14,7 +14,8 @@ Available chunking strategies:
 from app.document_conversion.extract import simple_docling_convert
 from app.document_conversion.chunking import chunk_document, process_chunks, get_embeddings_for_chunk_text
 from app.utils.file_handling import save_docling_and_md
-from app.database.std_sql_db import get_connection, bulk_validate_and_insert_chunks
+from app.database.db_common import get_connection
+from app.database.db_insert import bulk_validate_and_insert_chunks
 
 def convert_document(doc_path: str, save_intermediate: bool = True):
     """Convert a document to docling format and optionally save intermediate files.

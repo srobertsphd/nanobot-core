@@ -10,7 +10,7 @@ import pandas as pd
 import psycopg2.extras
 from typing import List, Dict, Any
 
-from app.database.std_sql_db import get_connection
+from app.database.db_common import get_connection
 
 def get_chunks_by_strategy(conn=None, strategy: str = "default") -> List[Dict[str, Any]]:
     """Retrieve all chunks with a specific chunking strategy.
@@ -437,7 +437,7 @@ def compare_chunking_strategies(conn=None, strategies=None, query=None):
         
         # If query provided, compare similarity
         if query:
-            from app.database.std_sql_db import search_similar_chunks
+            from app.database.db_retrieval import search_similar_chunks
             
             print(f"Comparing strategy performance for query: '{query}'")
             for strategy in strategies:

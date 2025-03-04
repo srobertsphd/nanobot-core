@@ -5,7 +5,7 @@ from anthropic import Anthropic
 from openai import OpenAI
 from pydantic import BaseModel
 
-from app.config.settings_dave import get_settings
+from sandbox.settings_dave import get_settings
 
 
 class LLMFactory:

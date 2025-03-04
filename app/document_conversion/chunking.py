@@ -71,9 +71,16 @@ def get_embeddings_for_chunk_text(processed_chunks):
     Returns:
         list: A list of dictionaries containing processed chunks with embeddings.
     """
-    for chunk in processed_chunks:
+    total = len(processed_chunks)
+    print(f"Getting embeddings for {total} chunks...")
+    
+    for i, chunk in enumerate(processed_chunks):
+        if i % 10 == 0:  # Print progress every 10 chunks
+            print(f"Processing embedding {i+1}/{total} ({(i+1)/total*100:.1f}%)")
         vector = get_embedding(chunk.get('text'))
         chunk['vector'] = vector
+    
+    print(f"Completed embedding generation for all {total} chunks")
     return processed_chunks
 
 
