@@ -7,7 +7,7 @@ when inserting or retrieving data.
 """
 
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
+from typing import List
 
 
 class ChunkMetadata(BaseModel):
@@ -19,8 +19,8 @@ class ChunkMetadata(BaseModel):
     filename: str  # Source document filename
     title: str     # Document title
     page_numbers: List[int]  # Page numbers where this chunk appears
-    headings: Optional[List[str]] = None  # remove optional and none when rebuilding db
-    chunking_strategy: Optional[str] = "default"  # remove optional anddefault when rebuilding db
+    headings: List[str]  # Hierarchical headings associated with this chunk
+    chunking_strategy: str  # Strategy used for chunking (default, balanced, fine_grained, etc.)
     # Add any other optional fields you might want to include
     
 

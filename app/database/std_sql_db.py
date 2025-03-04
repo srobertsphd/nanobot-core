@@ -28,9 +28,13 @@ BEGIN
         metadata ? 'filename' AND 
         metadata ? 'page_numbers' AND 
         metadata ? 'title' AND
+        metadata ? 'headings' AND
+        metadata ? 'chunking_strategy' AND
         jsonb_typeof(metadata->'filename') = 'string' AND
         jsonb_typeof(metadata->'title') = 'string' AND
-        jsonb_typeof(metadata->'page_numbers') = 'array'
+        jsonb_typeof(metadata->'page_numbers') = 'array' AND
+        jsonb_typeof(metadata->'headings') = 'array' AND
+        jsonb_typeof(metadata->'chunking_strategy') = 'string'
     ) THEN
         RETURN FALSE;
     END IF;

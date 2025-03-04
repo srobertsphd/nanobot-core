@@ -3,6 +3,12 @@ Document processing pipeline.
 
 Provides a simplified API for the complete document processing workflow:
 extraction → chunking → embedding preparation.
+
+Available chunking strategies:
+- default: Standard chunking with moderate chunk size
+- balanced: Balanced approach between context preservation and chunk size
+- fine_grained: Smaller chunks for more precise retrieval
+- paragraph: Chunk by paragraphs regardless of size
 """
 
 from app.document_conversion.extract import simple_docling_convert
@@ -14,7 +20,11 @@ def process_document(doc_path: str, chunking_strategy: str = "default", save_int
     
     Args:
         doc_path: Path to the document file
-        chunking_strategy: Chunking strategy to use
+        chunking_strategy: Chunking strategy to use. Options include:
+            - default: Standard chunking with moderate chunk size
+            - balanced: Balanced approach between context preservation and chunk size
+            - fine_grained: Smaller chunks for more precise retrieval
+            - paragraph: Chunk by paragraphs regardless of size
         save_intermediate: Whether to save intermediate docling and markdown files
         
     Returns:

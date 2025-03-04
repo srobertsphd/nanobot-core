@@ -4,8 +4,16 @@ Document processing and database loading script.
 This script processes documents and loads them into the database.
 
 Usage:
-  python -m process_and_load file.pdf    ## Process a single file
-  python -m process_and_load --all       ## Process all files (requires explicit flag)
+  python -m process_and_load file.pdf                     ## Process a single file with default strategy
+  python -m process_and_load file.pdf --strategy balanced ## Process a file with specific strategy
+  python -m process_and_load --all                        ## Process all files with default strategy
+  python -m process_and_load --all --strategy fine_grained ## Process all files with specific strategy
+
+Available chunking strategies:
+  - default: Standard chunking with moderate chunk size
+  - balanced: Balanced approach between context preservation and chunk size
+  - fine_grained: Smaller chunks for more precise retrieval
+  - paragraph: Chunk by paragraphs regardless of size
 """
 
 import sys

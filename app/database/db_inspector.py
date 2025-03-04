@@ -392,6 +392,120 @@ def inspect_database(conn=None) -> None:
         if close_conn and conn:
             conn.close()
 
+def compare_chunking_strategies(conn=None, strategies=None, query=None):
+    """Compare different chunking strategies.
+    
+    Args:
+        conn: Database connection (optional, will create one if not provided)
+        strategies: List of strategies to compare (default: all available)
+        query: Query text to use for comparison (optional)
+        
+    Returns:
+        DataFrame with comparison results
+    """
+    # Create connection if not provided
+    close_conn = False
+    if conn is None:
+        conn = get_connection()
+        close_conn = True
+    
+    try:
+        # Default strategies if none provided
+        if strategies is None:
+            strategies = ["default", "balanced", "fine_grained", "paragraph"]
+        
+        # Get chunks for each strategy
+        strategy_chunks = {}
+        for strategy in strategies:
+            chunks = get_chunks_by_strategy(conn, strategy)
+            if chunks:
+                strategy_chunks[strategy] = chunks
+        
+        # Create comparison DataFrame
+        comparison = []
+        for strategy, chunks in strategy_chunks.items():
+            stats = analyze_chunks(chunks)
+            comparison.append({
+                "strategy": strategy,
+                "chunk_count": stats["count"],
+                "avg_text_length": stats["text_length"]["avg"],
+                "min_text_length": stats["text_length"]["min"],
+                "max_text_length": stats["text_length"]["max"],
+            })
+        
+        df = pd.DataFrame(comparison)
+        
+        # If query provided, compare similarity
+        if query:
+            from app.database.std_sql_db import search_similar_chunks
+            
+            print(f"Comparing strategy performance for query: '{query}'")
+            for strategy in strategies:
+                if strategy in strategy_chunks:
+                    # Search with limit=1 to get top result for each strategy
+                    results = search_similar_chunks(conn, query, limit=1)
+                    if results:
+                        print(f"\nTop result for '{strategy}' strategy:")
+                        print(f"Similarity: {results[0]['similarity']:.4f}")
+                        print(f"Text: {results[0]['text'][:200]}...")
+        
+        return df
+    finally:
+        # Close connection if we created it
+        if close_conn and conn:
+            conn.close()
+
+def visualize_chunk_distribution(conn=None):
+    """Visualize the distribution of chunks by strategy.
+    
+    Args:
+        conn: Database connection (optional, will create one if not provided)
+        
+    Returns:
+        DataFrame with chunk counts by strategy
+    """
+    # Create connection if not provided
+    close_conn = False
+    if conn is None:
+        conn = get_connection()
+        close_conn = True
+    
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            # Get counts by strategy
+            cur.execute("""
+                SELECT 
+                    metadata->>'chunking_strategy' as strategy,
+                    COUNT(*) as chunk_count
+                FROM chunks
+                GROUP BY metadata->>'chunking_strategy'
+                ORDER BY chunk_count DESC
+            """)
+            results = cur.fetchall()
+            
+            # Create DataFrame
+            df = pd.DataFrame(results)
+            
+            # Try to plot if matplotlib is available
+            try:
+                import matplotlib.pyplot as plt
+                
+                plt.figure(figsize=(10, 6))
+                plt.bar(df['strategy'], df['chunk_count'])
+                plt.title('Chunk Distribution by Strategy')
+                plt.xlabel('Chunking Strategy')
+                plt.ylabel('Number of Chunks')
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                plt.show()
+            except ImportError:
+                print("Matplotlib not available for plotting")
+            
+            return df
+    finally:
+        # Close connection if we created it
+        if close_conn and conn:
+            conn.close()
 
 # run python -m app.database.db_inspector from the root directory to execute this file
 if __name__ == "__main__":

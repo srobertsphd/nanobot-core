@@ -75,3 +75,18 @@ def get_embeddings_for_chunk_text(processed_chunks):
         vector = get_embedding(chunk.get('text'))
         chunk['vector'] = vector
     return processed_chunks
+
+
+def get_available_chunking_strategies() -> dict:
+    """
+    Returns information about available chunking strategies.
+    
+    Returns:
+        dict: Dictionary mapping strategy names to their descriptions
+    """
+    return {
+        "default": "Standard chunking with moderate chunk size",
+        "balanced": "Balanced approach between context preservation and chunk size",
+        "fine_grained": "Smaller chunks for more precise retrieval",
+        "paragraph": "Chunk by paragraphs regardless of size"
+    }

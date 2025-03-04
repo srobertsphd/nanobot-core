@@ -164,7 +164,8 @@ def test_chunking_strategy_comparison(db_connection):
     test_texts = {
         "default": "This is a sample chunk from the default strategy. It contains information about the document.",
         "fine_grained": "This is a smaller chunk from the fine_grained strategy.",
-        "balanced": "This is a medium-sized chunk from the balanced strategy. It has a moderate amount of information."
+        "balanced": "This is a medium-sized chunk from the balanced strategy. It has a moderate amount of information.",
+        "paragraph": "This is a paragraph-based chunk. It respects paragraph boundaries."
     }
     
     # Insert test chunks for each strategy
@@ -177,6 +178,7 @@ def test_chunking_strategy_comparison(db_connection):
             "filename": "test_document.pdf",
             "page_numbers": [1],
             "title": "Test Document",
+            "headings": ["Test Heading"],  # Add required headings field
             "chunking_strategy": strategy
         }
         
