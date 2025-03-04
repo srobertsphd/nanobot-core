@@ -11,9 +11,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from typing import List, Dict, Any, Optional, Tuple
 
-from app.document_conversion.document_pipeline import convert_document_to_markdown
-from app.services.chunking_service import chunk_document
-from app.services.openai_service import get_embedding
+from app.document_conversion.document_pipeline import convert_document, chunk_converted_document
+from app.document_conversion.chunking import get_embeddings_for_chunk_text, get_available_chunking_strategies
 from app.database.std_sql_db import get_connection, bulk_validate_and_insert_chunks
 
 
@@ -21,25 +20,22 @@ class ChunkingExperiment:
     """Class to manage chunking experiments with different strategies."""
     
     def __init__(self, document_path: Optional[str] = None, 
-                 document_text: Optional[str] = None, 
-                 document_metadata: Optional[Dict[str, Any]] = None):
-        """Initialize with either a document path or text+metadata.
+                 converted_doc: Optional[Dict[str, Any]] = None):
+        """Initialize with either a document path or already converted document.
         
         Args:
             document_path: Path to the document file (PDF, DOCX, etc.)
-            document_text: Document text (if already converted)
-            document_metadata: Document metadata (if already extracted)
+            converted_doc: Already converted document (from convert_document)
         """
         self.document_path = document_path
-        self.document_text = document_text
-        self.document_metadata = document_metadata
+        self.converted_doc = converted_doc
         self.results = {}
         
-        # Convert document if path provided
-        if document_path and not document_text:
+        # Convert document if path provided and no converted doc
+        if document_path and not converted_doc:
             print(f"Converting document: {document_path}")
-            self.document_text, self.document_metadata = convert_document_to_markdown(document_path)
-            print(f"✅ Converted document ({len(self.document_text)} characters)")
+            self.converted_doc = convert_document(document_path)
+            print("✅ Converted document")
     
     def run_strategy(self, strategy: str) -> Dict[str, Any]:
         """Run a single chunking strategy and store results.
@@ -52,8 +48,8 @@ class ChunkingExperiment:
         """
         print(f"\n\n===== Testing {strategy} chunking strategy =====")
         
-        # Chunk the document
-        chunks = chunk_document(self.document_text, self.document_metadata, chunking_strategy=strategy)
+        # Chunk the document with this strategy
+        chunks = chunk_converted_document(self.converted_doc, chunking_strategy=strategy)
         
         # Convert to DataFrame
         df = self._chunks_to_dataframe(chunks)
@@ -93,7 +89,8 @@ class ChunkingExperiment:
             Dictionary with results for all strategies
         """
         if strategies is None:
-            strategies = ["default", "balanced", "fine_grained", "paragraph"]
+            # Get available strategies from your chunking module
+            strategies = list(get_available_chunking_strategies().keys())
         
         for strategy in strategies:
             self.run_strategy(strategy)
@@ -235,26 +232,12 @@ class ChunkingExperiment:
             chunks = self.results[strategy]["chunks"]
             
             # Add embeddings to chunks
-            chunks_with_embeddings = []
-            
-            for i, chunk in enumerate(chunks):
-                if i % 10 == 0:  # Progress indicator
-                    print(f"Generating embedding for chunk {i+1}/{len(chunks)}...")
-                
-                # Get embedding
-                embedding = get_embedding(chunk["text"])
-                
-                # Create chunk with embedding
-                chunk_with_embedding = {
-                    "text": chunk["text"],
-                    "vector": embedding,
-                    "metadata": chunk["metadata"]
-                }
-                
-                chunks_with_embeddings.append(chunk_with_embedding)
+            print(f"Adding embeddings to {len(chunks)} chunks...")
+            chunks_with_embeddings = get_embeddings_for_chunk_text(chunks)
             
             # Insert chunks into database
             try:
+                print("Uploading chunks to database...")
                 chunk_ids = bulk_validate_and_insert_chunks(conn, chunks_with_embeddings)
                 inserted_ids[strategy] = chunk_ids
                 print(f"✅ Successfully inserted {len(chunk_ids)} chunks with '{strategy}' strategy")

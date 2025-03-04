@@ -41,7 +41,9 @@ def test_data():
         "metadata": {
             "filename": "test_document.pdf",
             "page_numbers": [1],
-            "title": "Test Document"
+            "title": "Test Document",
+            "headings": ["Test Heading"],
+            "chunking_strategy": "default"
         }
     }
 
@@ -115,7 +117,7 @@ def test_vector_similarity_search(db_connection):
     
     print(f"\nVector dimensions: AI={len(vector1)}, Climate={len(vector2)}")
     
-    # Insert both chunks
+    # Insert both chunks with complete metadata
     with db_connection.cursor() as cur:
         cur.execute("""
             INSERT INTO chunks (text, vector, metadata)
@@ -123,7 +125,13 @@ def test_vector_similarity_search(db_connection):
         """, (
             test_text1,
             vector1,
-            json.dumps({"filename": "test1.pdf", "page_numbers": [1], "title": "AI Test"})
+            json.dumps({
+                "filename": "test1.pdf", 
+                "page_numbers": [1], 
+                "title": "AI Test",
+                "headings": ["AI Heading"],
+                "chunking_strategy": "default"
+            })
         ))
         
         cur.execute("""
@@ -132,7 +140,13 @@ def test_vector_similarity_search(db_connection):
         """, (
             test_text2,
             vector2,
-            json.dumps({"filename": "test2.pdf", "page_numbers": [1], "title": "Climate Test"})
+            json.dumps({
+                "filename": "test2.pdf", 
+                "page_numbers": [1], 
+                "title": "Climate Test",
+                "headings": ["Climate Heading"],
+                "chunking_strategy": "default"
+            })
         ))
     
     # Search with a query related to AI
