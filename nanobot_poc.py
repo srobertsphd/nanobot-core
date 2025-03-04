@@ -1,5 +1,5 @@
 import streamlit as st
-from app.database.std_sql_db import get_connection, search_similar_chunks
+from app.database.std_sql_db import get_connection, search_similar_chunks_with_filters
 from app.services.openai_service import get_chat_response
 from app.services.retrieval_service import get_chunking_strategies, get_filenames
 
@@ -100,11 +100,10 @@ if __name__ == "__main__":
             # Connect to the database
             conn = get_connection()
             try:
-                # Use search_similar_chunks with the sidebar configuration
-                # We need to modify the search function to handle multiple filenames
+                # Use the filtered search function with the sidebar configuration
                 if all_files:
                     # Search across all files
-                    context_chunks = search_similar_chunks(
+                    context_chunks = search_similar_chunks_with_filters(
                         conn, 
                         prompt, 
                         limit=num_chunks,
@@ -113,24 +112,24 @@ if __name__ == "__main__":
                     )
                 else:
                     # Search in multiple specific files
-                    # We'll need to run multiple searches and combine results
                     all_chunks = []
                     for file in selected_files:
-                        file_chunks = search_similar_chunks(
+                        file_chunks = search_similar_chunks_with_filters(
                             conn, 
                             prompt, 
-                            limit=num_chunks,  # Get this many from each file
+                            limit=num_chunks,
                             chunking_strategy=chunking_strategy,
                             filename=file
                         )
                         all_chunks.extend(file_chunks)
                     
                     # Sort combined results by similarity and limit to num_chunks
-                    context_chunks = sorted(all_chunks, key=lambda x: x['similarity'])[:num_chunks]
+                    context_chunks = sorted(all_chunks, key=lambda x: x['similarity'], reverse=True)[:num_chunks]
                 
                 print(f"Found {len(context_chunks)} relevant chunks")
             except Exception as e:
                 print(f"Error retrieving context: {e}")
+                st.error(f"Error retrieving context: {e}")
                 context_chunks = []
             finally:
                 conn.close()

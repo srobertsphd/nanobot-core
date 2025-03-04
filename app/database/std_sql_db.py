@@ -252,4 +252,84 @@ def search_similar_chunks(conn, query_text, limit=5, chunking_strategy=None, fil
             processed_results.append(result)
         
         return processed_results
+
+def search_similar_chunks_with_filters(conn, query_text, limit=5, chunking_strategy=None, filename=None):
+    """
+    Search for chunks similar to the query text with optional filtering.
+    
+    Args:
+        conn: Database connection
+        query_text: The text to search for
+        limit: Maximum number of results to return
+        chunking_strategy: Filter by chunking strategy (optional)
+        filename: Filter by filename (optional)
+        
+    Returns:
+        List of similar chunks with their similarity scores and metadata
+    """
+    # Generate embedding for the query text
+    query_embedding = get_embedding(query_text)
+    
+    # Print debug information
+    print(f"Searching with parameters: limit={limit}, chunking_strategy={chunking_strategy}, filename={filename}")
+    
+    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+        # First, let's check if we have any chunks in the database
+        cursor.execute("SELECT COUNT(*) FROM chunks")
+        count = cursor.fetchone()[0]
+        print(f"Total chunks in database: {count}")
+        
+        if count == 0:
+            print("No chunks in database, returning empty list")
+            return []
+        
+        # Build query with filters
+        base_query = """
+        SELECT id, text, metadata, 
+               1 - (vector <#> %s::vector) as similarity
+        FROM chunks
+        WHERE 1=1
+        """
+        
+        params = [query_embedding]  # Start with the embedding parameter
+        
+        # Add filters if provided
+        if chunking_strategy:
+            base_query += " AND metadata->>'chunking_strategy' = %s"
+            params.append(chunking_strategy)
+        
+        if filename:
+            base_query += " AND metadata->>'filename' = %s"
+            params.append(filename)
+        
+        # Complete the query
+        query = base_query + """
+        ORDER BY similarity DESC
+        LIMIT %s
+        """
+        
+        params.append(limit)
+        
+        # Print the query for debugging
+        print(f"Executing query: {query}")
+        print(f"With parameters: {params}")
+        
+        # Execute the query
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        print(f"Query returned {len(results)} results")
+        
+        # Process results into a more usable format
+        processed_results = []
+        for row in results:
+            # Convert row to dictionary
+            result = dict(row)
+            
+            # Parse metadata from JSON string if needed
+            if isinstance(result['metadata'], str):
+                result['metadata'] = json.loads(result['metadata'])
+                
+            processed_results.append(result)
+        
+        return processed_results
     
