@@ -1,4 +1,40 @@
+# Environment and virtual environments
 .env
 .venv/
+env/
+venv/
+ENV/
+
+# Python cache files
 __pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.*cache*/
+
+# IDE settings
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter Notebooks temporary files
+.ipynb_checkpoints/
+
+# Database temporary files
+postgres-data/
+
+# Logs and temporary files
+logs/
+*.log
+tmp/
+temp/
+
+# Coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# OS specific
+.DS_Store
+Thumbs.db
