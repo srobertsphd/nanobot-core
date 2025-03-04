@@ -28,3 +28,10 @@ This project will contain the basic elements of Nanobot for document ingestion a
 
     - [ ] Implement search capabilities to query the vectorized data.
 
+## Services
+
+- [ ] Chunking Service
+- [ ] Vectorization Service
+- [ ] Database Service
+- [ ] Chat Service
+- [ ] Search Service
