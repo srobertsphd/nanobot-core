@@ -17,28 +17,17 @@ client = OpenAI(api_key=settings.openai.api_key)
 template_loader = jinja2.FileSystemLoader(searchpath="app/prompts/templates")
 template_env = jinja2.Environment(loader=template_loader)
 
-def get_embedding(text: str) -> list[float]:
-    """
-    Get an embedding vector for a text string using OpenAI's embedding model.
-    
-    Args:
-        text (str): The text to embed
+def get_embedding(text, model=None) -> list[float]:
+    """Get embedding for text using OpenAI API."""
+    # Use the model from settings if not specified
+    if model is None:
+        model = settings.openai.embedding_model
         
-    Returns:
-        list[float]: The embedding vector
-    """
-    # Normalize text by replacing newlines with spaces
-    text = text.replace("\n", " ")
-    
     response = client.embeddings.create(
-        input=[text],
-        model=settings.openai.embedding_model
+        input=text,
+        model=model
     )
-    
-    # Extract the embedding vector from the response
-    embedding = response.data[0].embedding
-    
-    return embedding
+    return response.data[0].embedding
 
 def get_chat_response(prompt: str, context_chunks: list) -> str:
     """

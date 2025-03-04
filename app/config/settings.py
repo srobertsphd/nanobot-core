@@ -66,14 +66,31 @@ class OpenAISettings(BaseSettings):
     """
     api_key: str                         # OpenAI API key
     model: str = "gpt-4o"                # Default model for chat completions
-    embedding_model: str = "text-embedding-3-large"  # Model for embeddings
+    embedding_model: str = "text-embedding-3-small"  # Model for embeddings
     temperature: float = 0.0             # Controls randomness (0=deterministic, 1=creative)
     chat_max_tokens: Optional[int] = None          # Maximum tokens in model's response
     embedding_max_tokens: int = 8191     # Maximum tokens for text embeddings
+    embedding_dimensions: int = 1536  # Dimensions for this model
 
     model_config = SettingsConfigDict(
         env_prefix="OPENAI_"  # Looks for OPENAI_API_KEY, etc.
     )
+
+class VectorIndexSettings(BaseSettings):
+    """Vector index settings for PostgreSQL PG vector extension."""
+    
+    # Index type: 'hnsw' or 'ivfflat'
+    index_type: str = "hnsw" # HNSW is what is needed to have vectors over 2000 dimensions.
+    
+    # HNSW parameters
+    hnsw_m: int = 32  # Higher value (32) for better search quality
+    hnsw_ef_construction: int = 100  # Higher value (100) for better search quality
+    
+    # IVFFlat parameters (if needed)
+    ivfflat_lists: int = 100
+    
+    class Config:
+        env_prefix = "VECTOR_INDEX_"
 
 class Settings(BaseSettings):
     """Main application settings container.
@@ -83,6 +100,7 @@ class Settings(BaseSettings):
     local_db: DatabaseSettings = DatabaseSettings()
     admin_db: AdminDatabaseSettings = AdminDatabaseSettings()
     openai: OpenAISettings = OpenAISettings()
+    vector_index: VectorIndexSettings = VectorIndexSettings()
 
     model_config = SettingsConfigDict(
         env_file=".env",                # Load from .env file

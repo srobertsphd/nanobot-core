@@ -14,6 +14,7 @@ from app.database.std_sql_db import (
     CREATE_EXTENSION_QUERY,
     CREATE_METADATA_CHECK
 )
+from app.config.settings import settings
 
 def reset_database_with_new_schema(conn=None, confirm=False):
     """Reset the database with the new schema.
@@ -63,15 +64,29 @@ def reset_database_with_new_schema(conn=None, confirm=False):
             cur.execute(CREATE_TABLE_QUERY)
             conn.commit()
         
-        # Step 5: Create the vector index if it doesn't exist
-        print("Step 5: Creating vector index...")
-        with conn.cursor() as cur:
-            cur.execute("""
+        # Step 5: Create the vector index based on settings
+        print(f"Step 5: Creating {settings.vector_index.index_type} vector index...")
+        
+        if settings.vector_index.index_type.lower() == "hnsw":
+            index_query = f"""
+                CREATE INDEX IF NOT EXISTS chunks_vector_idx 
+                ON chunks 
+                USING hnsw (vector vector_cosine_ops)
+                WITH (
+                    m = {settings.vector_index.hnsw_m}, 
+                    ef_construction = {settings.vector_index.hnsw_ef_construction}
+                )
+            """
+        else:  # Default to ivfflat
+            index_query = f"""
                 CREATE INDEX IF NOT EXISTS chunks_vector_idx 
                 ON chunks 
                 USING ivfflat (vector vector_cosine_ops)
-                WITH (lists = 100)
-            """)
+                WITH (lists = {settings.vector_index.ivfflat_lists})
+            """
+            
+        with conn.cursor() as cur:
+            cur.execute(index_query)
             conn.commit()
         
         print("✅ Database has been reset with the new schema")

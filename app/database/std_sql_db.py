@@ -7,6 +7,7 @@ It handles database connection, table creation, and vector-based operations.
 """
 
 import psycopg2
+# Dictionary-like access to columns - You can access columns by name instead of index:
 import psycopg2.extras # needed for the DictCursor and cursor_factory
 import json
 from app.services.openai_service import get_embedding
@@ -45,11 +46,11 @@ $$ LANGUAGE plpgsql;
 """
 
 # SQL query to create the chunks table with vector support and metadata validation
-CREATE_TABLE_QUERY = """
+CREATE_TABLE_QUERY = f"""
 CREATE TABLE IF NOT EXISTS chunks (
     id SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
-    vector VECTOR(3072) NOT NULL,
+    vector VECTOR({settings.openai.embedding_dimensions}) NOT NULL,
     metadata JSONB NOT NULL,
     CONSTRAINT valid_metadata CHECK (validate_chunk_metadata(metadata))
 );

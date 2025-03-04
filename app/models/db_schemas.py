@@ -8,6 +8,7 @@ when inserting or retrieving data.
 
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List
+from app.config.settings import settings
 
 
 class ChunkMetadata(BaseModel):
@@ -31,7 +32,10 @@ class Chunks(BaseModel):
     This is the main data structure stored in the database.
     """
     text: str  # The actual text content
-    vector: List[float] = Field(min_length=3072, max_length=3072)  # Embedding vector (fixed dimension)
+    vector: List[float] = Field(
+        min_length=settings.openai.embedding_dimensions, 
+        max_length=settings.openai.embedding_dimensions
+    )  # Embedding vector (fixed dimension)
     metadata: ChunkMetadata  # Associated metadata
     
     model_config = ConfigDict(  # New style Pydantic v2 config
