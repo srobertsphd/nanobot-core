@@ -11,8 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from typing import List, Dict, Any, Optional, Tuple
 
-from app.document_conversion.document_pipeline import convert_document, chunk_converted_document
-from app.document_conversion.chunking import get_embeddings_for_chunk_text, get_available_chunking_strategies
+from app.services.document_service import DocumentService
 from app.database.db_common import get_connection
 from app.database.db_insert import bulk_validate_and_insert_chunks
 
@@ -31,11 +30,12 @@ class ChunkingExperiment:
         self.document_path = document_path
         self.converted_doc = converted_doc
         self.results = {}
+        self.document_service = DocumentService()
         
         # Convert document if path provided and no converted doc
         if document_path and not converted_doc:
             print(f"Converting document: {document_path}")
-            self.converted_doc = convert_document(document_path)
+            self.converted_doc = self.document_service.convert_document(document_path)
             print("✅ Converted document")
     
     def run_strategy(self, strategy: str) -> Dict[str, Any]:
@@ -50,7 +50,7 @@ class ChunkingExperiment:
         print(f"\n\n===== Testing {strategy} chunking strategy =====")
         
         # Chunk the document with this strategy
-        chunks = chunk_converted_document(self.converted_doc, chunking_strategy=strategy)
+        chunks = self.document_service.chunk_document(self.converted_doc, chunking_strategy=strategy)
         
         # Convert to DataFrame
         df = self._chunks_to_dataframe(chunks)
@@ -90,8 +90,8 @@ class ChunkingExperiment:
             Dictionary with results for all strategies
         """
         if strategies is None:
-            # Get available strategies from your chunking module
-            strategies = list(get_available_chunking_strategies().keys())
+            # Get available strategies from chunking service
+            strategies = list(self.document_service.chunking_service.get_available_strategies().keys())
         
         for strategy in strategies:
             self.run_strategy(strategy)
@@ -234,7 +234,7 @@ class ChunkingExperiment:
             
             # Add embeddings to chunks
             print(f"Adding embeddings to {len(chunks)} chunks...")
-            chunks_with_embeddings = get_embeddings_for_chunk_text(chunks)
+            chunks_with_embeddings = self.document_service.get_embeddings_for_chunks(chunks)
             
             # Insert chunks into database
             try:

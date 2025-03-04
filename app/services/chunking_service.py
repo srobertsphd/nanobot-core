@@ -107,4 +107,41 @@ class ChunkingService:
         """
         chunker = self.get_chunker(strategy)
         chunk_iter = chunker.chunk(document)
-        return list(chunk_iter) 
+        return list(chunk_iter)
+    
+    def process_chunks(self, chunks, chunking_strategy="default") -> list[dict]:
+        """Extract text, filename, page numbers, and title from the chunks."""
+        processed_chunks = [
+            {
+                "text": chunk.text,
+                "metadata": {
+                    "filename": chunk.meta.origin.filename if hasattr(chunk.meta, 'origin') else "",
+                    "page_numbers": [
+                        page_no
+                        for page_no in sorted(
+                            set(
+                                prov.page_no
+                                for item in chunk.meta.doc_items
+                                for prov in item.prov
+                            )
+                        )
+                    ]
+                    or None,
+                    "title": chunk.meta.headings[0] if chunk.meta.headings else None,
+                    "headings": chunk.meta.headings if hasattr(chunk.meta, 'headings') else [],
+                    "chunking_strategy": chunking_strategy,
+                },
+            }
+            for chunk in chunks
+        ]
+        return processed_chunks
+    
+    def get_available_strategies(self) -> dict:
+        """Returns information about available chunking strategies."""
+        return {
+            "default": "Standard chunking with moderate chunk size",
+            "balanced": "Balanced approach between context preservation and chunk size",
+            "fine_grained": "Smaller chunks for more precise retrieval",
+            "context": "Larger chunks that preserve more context for QA and summarization",
+            "hierarchical": "Chunks based on document's natural hierarchy and structure"
+        } 
