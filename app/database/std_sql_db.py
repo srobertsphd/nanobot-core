@@ -188,44 +188,68 @@ def bulk_validate_and_insert_chunks(conn, chunks: list[dict]) -> list[int]:
         raise
 
 
-def search_similar_chunks(conn, query_text: str, limit: int = 5) -> list[dict]:
-    """Search for chunks similar to the query text using vector similarity.
+def search_similar_chunks(conn, query_text, limit=5, chunking_strategy=None, filename=None):
+    """
+    Search for chunks similar to the query text with optional filtering.
     
     Args:
         conn: Database connection
-        query_text: The text to find similar chunks for
-        limit: Maximum number of results to return (default: 5)
+        query_text: The text to search for
+        limit: Maximum number of results to return
+        chunking_strategy: Filter by chunking strategy (optional)
+        filename: Filter by filename (optional)
         
     Returns:
-        List of dictionaries containing text, metadata, and similarity score
+        List of similar chunks with their similarity scores and metadata
     """
     # Generate embedding for the query text
     query_embedding = get_embedding(query_text)
     
-    # SQL query using cosine distance (1 - cosine similarity)
-    search_query = """
-        SELECT 
-            text,
-            metadata,
-            (1 - (vector <#> %s::vector)) as similarity
+    # Print debug information
+    print(f"Searching with parameters: limit={limit}, chunking_strategy={chunking_strategy}, filename={filename}")
+    
+    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+        # First, let's check if we have any chunks in the database
+        cursor.execute("SELECT COUNT(*) FROM chunks")
+        count = cursor.fetchone()[0]
+        print(f"Total chunks in database: {count}")
+        
+        if count == 0:
+            print("No chunks in database, returning empty list")
+            return []
+        
+        # Most basic query - no filters, just vector similarity
+        # Cast the embedding array to vector type explicitly
+        query = """
+        SELECT id, text, metadata, 
+               1 - (vector <#> %s::vector) as similarity
         FROM chunks
         ORDER BY similarity DESC
-        LIMIT %s;
-    """
-    
-    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-        cur.execute(search_query, (query_embedding, limit))
-        results = cur.fetchall()
+        LIMIT %s
+        """
         
-        # Format results as dictionaries
-        similar_chunks = [
-            {
-                "text": row['text'],
-                "metadata": row['metadata'],
-                "similarity": row['similarity']
-            }
-            for row in results
-        ]
+        params = [query_embedding, limit]
         
-        return similar_chunks
+        # Print the query for debugging
+        print(f"Executing query: {query}")
+        print(f"With parameters: {params}")
+        
+        # Execute the query
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        print(f"Query returned {len(results)} results")
+        
+        # Process results into a more usable format
+        processed_results = []
+        for row in results:
+            # Convert row to dictionary
+            result = dict(row)
+            
+            # Parse metadata from JSON string if needed
+            if isinstance(result['metadata'], str):
+                result['metadata'] = json.loads(result['metadata'])
+                
+            processed_results.append(result)
+        
+        return processed_results
     

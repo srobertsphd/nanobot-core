@@ -1,10 +1,73 @@
 import streamlit as st
 from app.database.std_sql_db import get_connection, search_similar_chunks
 from app.services.openai_service import get_chat_response
+from app.services.retrieval_service import get_chunking_strategies, get_filenames
 
 # Test the function
 if __name__ == "__main__":
     st.title("🤖 Nanobot POC")
+    
+    # Setup sidebar
+    with st.sidebar:
+        st.header("Retrieval Configuration")
+        
+        # Connect to the database to get metadata options
+        conn = get_connection()
+        try:
+            chunking_strategies = get_chunking_strategies(conn)
+            filenames = get_filenames(conn)
+            
+            if not chunking_strategies:
+                st.error("No chunking strategies found in the database")
+                chunking_strategies = ["default"]
+                
+            if not filenames:
+                st.warning("No files found in the database")
+                filenames = []
+        except Exception as e:
+            st.error(f"Error loading metadata options: {e}")
+            chunking_strategies = ["default"]
+            filenames = []
+        finally:
+            conn.close()
+        
+        # Number of chunks to retrieve
+        num_chunks = st.slider(
+            "Number of chunks to retrieve", 
+            min_value=1, 
+            max_value=10, 
+            value=5,
+            step=1
+        )
+        
+        # Chunking strategy selector (required)
+        chunking_strategy = st.selectbox(
+            "Chunking Strategy (required)",
+            options=chunking_strategies,
+            index=0,
+            key="chunking_strategy"
+        )
+        
+        # Filename multi-selector
+        st.write("Source Files (select at least one or 'All Files')")
+        all_files = st.checkbox("All Files", value=True, key="all_files")
+        
+        selected_files = []
+        if not all_files:
+            # Only show the multi-select if "All Files" is not checked
+            if filenames:
+                selected_files = st.multiselect(
+                    "Select specific files",
+                    options=filenames,
+                    default=[filenames[0]] if filenames else None,
+                    key="selected_files"
+                )
+                
+                # Validate at least one file is selected
+                if not selected_files:
+                    st.error("Please select at least one file or choose 'All Files'")
+            else:
+                st.error("No files available to select")
     
     # Simple chat interface
     if "messages" not in st.session_state:
@@ -24,13 +87,47 @@ if __name__ == "__main__":
         with st.chat_message("user"):
             st.markdown(prompt)
         
+        # Validate file selection
+        if not all_files and not selected_files:
+            with st.chat_message("assistant"):
+                error_msg = "Please select at least one file or choose 'All Files' in the sidebar."
+                st.error(error_msg)
+                st.session_state.messages.append({"role": "assistant", "content": error_msg})
+            st.stop()
+        
         # Get context from database
         with st.spinner("Searching knowledge base..."):
             # Connect to the database
             conn = get_connection()
             try:
-                # Use search_similar_chunks directly
-                context_chunks = search_similar_chunks(conn, prompt, limit=5)
+                # Use search_similar_chunks with the sidebar configuration
+                # We need to modify the search function to handle multiple filenames
+                if all_files:
+                    # Search across all files
+                    context_chunks = search_similar_chunks(
+                        conn, 
+                        prompt, 
+                        limit=num_chunks,
+                        chunking_strategy=chunking_strategy,
+                        filename=None  # None means all files
+                    )
+                else:
+                    # Search in multiple specific files
+                    # We'll need to run multiple searches and combine results
+                    all_chunks = []
+                    for file in selected_files:
+                        file_chunks = search_similar_chunks(
+                            conn, 
+                            prompt, 
+                            limit=num_chunks,  # Get this many from each file
+                            chunking_strategy=chunking_strategy,
+                            filename=file
+                        )
+                        all_chunks.extend(file_chunks)
+                    
+                    # Sort combined results by similarity and limit to num_chunks
+                    context_chunks = sorted(all_chunks, key=lambda x: x['similarity'])[:num_chunks]
+                
                 print(f"Found {len(context_chunks)} relevant chunks")
             except Exception as e:
                 print(f"Error retrieving context: {e}")

@@ -27,7 +27,13 @@ def get_embedding(text, model=None) -> list[float]:
         input=text,
         model=model
     )
-    return response.data[0].embedding
+    embedding = response.data[0].embedding
+    
+    # Make sure the embedding is in the correct format for pgvector
+    # It should be a list of floats, not a numpy array or other format
+    embedding = [float(x) for x in embedding]
+    
+    return embedding
 
 def get_chat_response(prompt: str, context_chunks: list) -> str:
     """
