@@ -6,22 +6,26 @@ def test_validate_chunk_basic():
     """Test basic validation of a well-formed chunk"""
     test_chunk = {
         "text": "This is a test chunk",
-        "vector": [0.1] * 3072,  # Creates list of 3072 elements
+        "vector": [0.1] * 1536,  # Changed from 3072 to 1536
         "metadata": {
             "filename": "test.pdf",
             "page_numbers": [1],
-            "title": "Test Document"
+            "title": "Test Document",
+            "headings": ["Test Heading"],  # Added required field
+            "chunking_strategy": "default"  # Added required field
         }
     }
     
     validated = validate_chunk(test_chunk)
     assert validated.text == test_chunk["text"]
-    assert len(validated.vector) == 3072
+    assert len(validated.vector) == 1536
     
     # Access metadata fields directly from the ChunkMetadata object
     assert validated.metadata.filename == test_chunk["metadata"]["filename"]
     assert validated.metadata.page_numbers == test_chunk["metadata"]["page_numbers"]
     assert validated.metadata.title == test_chunk["metadata"]["title"]
+    assert validated.metadata.headings == test_chunk["metadata"]["headings"]
+    assert validated.metadata.chunking_strategy == test_chunk["metadata"]["chunking_strategy"]
 
 
 def test_validate_chunk_missing_metadata_field():

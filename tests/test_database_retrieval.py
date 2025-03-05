@@ -1,5 +1,7 @@
 # from app.config.settings import settings # to activate the settings singleton
-from app.database.std_sql_db import get_connection, search_similar_chunks, insert_chunk
+from app.database.db_common import get_connection
+from app.database.db_retrieval import search_similar_chunks
+from app.database.db_insert import insert_chunk
 from app.services.openai_service import get_embedding
 
 import pytest
