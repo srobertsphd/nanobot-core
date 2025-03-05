@@ -17,6 +17,15 @@ def test_settings_loaded():
     # Check admin database settings
     assert hasattr(settings, 'admin_db')
     
+    # Check Neon database settings
+    assert hasattr(settings, 'neon_db')
+    assert hasattr(settings.neon_db, 'db_url')
+    assert settings.neon_db.db_url.startswith('postgresql://'), "Neon DB URL should start with postgresql://"
+    
+    # Check use_neon flag
+    assert hasattr(settings, 'use_neon')
+    assert isinstance(settings.use_neon, bool), "use_neon should be a boolean"
+    
     # Check vector index settings
     assert hasattr(settings, 'vector_index')
     assert hasattr(settings.vector_index, 'index_type')
