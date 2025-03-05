@@ -94,4 +94,36 @@ def initialize_database():
         print(f"❌ Error initializing database: {e}")
         raise
     finally:
+        conn.close()
+
+def initialize_neon_database():
+    """Initialize the Neon database with all required components."""
+    print("Initializing Neon database...")
+    
+    # Connect to Neon database
+    conn = get_connection(use_neon=True)
+    
+    try:
+        # Enable pgvector extension
+        enable_pgvector_extension(conn)
+        print("✅ pgvector extension enabled in Neon database")
+        
+        # Create tables
+        create_tables(conn)
+        print("✅ Tables created in Neon database")
+        
+        # Create vector index
+        create_vector_index(conn)
+        print("✅ Vector index created in Neon database")
+        
+        # Commit all changes
+        conn.commit()
+        print("✅ Neon database initialized successfully")
+        
+        return True
+    except Exception as e:
+        conn.rollback()
+        print(f"❌ Error initializing Neon database: {e}")
+        raise
+    finally:
         conn.close() 

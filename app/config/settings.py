@@ -128,3 +128,9 @@ class Settings(BaseSettings):
 
 # Create a singleton instance for global access
 settings = Settings()
+
+def reload_settings():
+    """Reload settings from environment variables."""
+    global settings
+    settings = Settings()
+    return settings
