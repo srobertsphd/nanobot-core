@@ -3,9 +3,11 @@ from app.database.db_common import get_connection
 from app.database.db_retrieval import search_similar_chunks
 from app.database.db_insert import insert_chunk
 from app.services.openai_service import get_embedding
-
+from app.config.settings import settings
 import pytest
 import json
+import psycopg2
+
 
 
 @pytest.fixture
@@ -224,3 +226,34 @@ def test_chunking_strategy_comparison(db_connection):
     
     # The default strategy should be most similar for this query
     assert similar_chunks[0]['metadata']['chunking_strategy'] == 'default', "Default strategy should be most similar"
+
+def test_neon_connection():
+    """Test connection to Neon database."""
+    print("Testing Neon database connection...")
+
+    # Print the URL from settings to verify it's loaded
+    print(f"Settings URL: {settings.neon_db.db_url}")
+    
+    # Connect to Neon using the URL directly
+    conn = psycopg2.connect(settings.neon_db.db_url)
+    print("✅ Connected to Neon database")
+    
+    # Create a cursor
+    cur = conn.cursor()
+    
+    # Execute SQL commands to retrieve the current time and version from PostgreSQL
+    cur.execute('SELECT NOW();')
+    time = cur.fetchone()[0]
+    cur.execute('SELECT version();')
+    version = cur.fetchone()[0]
+    
+    assert time is not None, "Current time should not be None"
+    assert version is not None, "PostgreSQL version should not be None"
+    # Close cursor and connection
+    cur.close()
+    conn.close()
+    
+    print(f"Current time: {time}")
+    print(f"PostgreSQL version: {version}")
+    print("✅ Neon database connection test completed successfully")
+

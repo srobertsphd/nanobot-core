@@ -9,6 +9,7 @@ type validation and default values.
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
+
 class DatabaseSettings(BaseSettings):
     """Database connection settings for the application database.
     
@@ -59,6 +60,17 @@ class AdminDatabaseSettings(BaseSettings):
             "port": self.port
         }
 
+class NeonDatabaseSettings(BaseSettings):
+    """Neon database connection settings.
+    
+    Uses a connection URL from the NEON_DB_URL environment variable.
+    """
+    db_url: str  # Full connection URL for Neon
+
+    model_config = SettingsConfigDict(
+        env_prefix="NEON_"  # Looks for NEON_DB_URL
+    )
+
 class OpenAISettings(BaseSettings):
     """OpenAI API configuration settings.
     
@@ -89,8 +101,9 @@ class VectorIndexSettings(BaseSettings):
     # IVFFlat parameters (if needed)
     ivfflat_lists: int = 100
     
-    class Config:
-        env_prefix = "VECTOR_INDEX_"
+    model_config = SettingsConfigDict(
+        env_prefix="VECTOR_INDEX_"
+    )
 
 class Settings(BaseSettings):
     """Main application settings container.
@@ -99,8 +112,12 @@ class Settings(BaseSettings):
     """
     local_db: DatabaseSettings = DatabaseSettings()
     admin_db: AdminDatabaseSettings = AdminDatabaseSettings()
+    neon_db: NeonDatabaseSettings = NeonDatabaseSettings()
     openai: OpenAISettings = OpenAISettings()
     vector_index: VectorIndexSettings = VectorIndexSettings()
+    
+    # Flag to determine which database to use (from USE_NEON environment variable)
+    use_neon: bool = False  # Default value if USE_NEON is not set
 
     model_config = SettingsConfigDict(
         env_file=".env",                # Load from .env file
