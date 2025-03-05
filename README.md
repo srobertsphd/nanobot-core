@@ -2,36 +2,16 @@
 
 This project will contain the basic elements of Nanobot for document ingestion and vectorization, a basic frontend with a chat interface and retrieval, and a dockerized PostgreSQL database with Timescale vector extension.
 
-## Documentation
+## TODO
 
-1. **Ingest Documents**
-
-    - [ ] For now, focus on PDFs.
-    
-    - [ ] Understand the Docling document structure and how to extract text and metadata.
-    
-    - [ ] Determine how to store documents to link page numbers to retrieved blobs.
-
-2. **Chunk, Vectorize, and Store Data**
-
-    - [ ] Chunk the markdown data.
-    
-    - [ ] Vectorize the chunks.
-    
-    - [ ] Store the vectorized data in a PostgreSQL database with the Timescale vector extension.
-
-3. **Chat with Vectorized Data**
-
-    - [ ] Implement a chat interface to interact with the vectorized data.
-
-4. **Search Vectorized Data**
-
-    - [ ] Implement search capabilities to query the vectorized data.
-
-## Services
-
-- [ ] Chunking Service
-- [ ] Vectorization Service
-- [ ] Database Service
-- [ ] Chat Service
-- [ ] Search Service
+1.  Integrate transaction handling with the database code
+    * Have implemnented the transaction file
+    * Have tested using pytest transaction.py
+2. Deal with Logging
+    * Basic Logging
+    * Logfire Logging for LLM and Production
+3. Deal with PydanticAI Implementation
+    * Will require an LLM factory of some kind?  
+4. Set up testing of the RAG system
+5. Deal with the Document Ingestion with Docling
+6. Set up other services and Factory patterns
