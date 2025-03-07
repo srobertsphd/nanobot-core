@@ -73,7 +73,13 @@ class MyJSONFormatter(logging.Formatter):
         extras = {}
         for key, value in record.__dict__.items():
             if key not in standard_attrs and key not in self.fmt_keys.values():
-                extras[key] = value
+                try:
+                    # Test if the value is JSON serializable
+                    json.dumps({key: value})
+                    extras[key] = value
+                except (TypeError, OverflowError):
+                    # Convert non-serializable objects to strings
+                    extras[key] = str(value)
         
         # Only add the extras field if there are any extra attributes
         if extras:

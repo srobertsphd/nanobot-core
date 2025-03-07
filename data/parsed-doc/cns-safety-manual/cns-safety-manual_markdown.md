@@ -133,9 +133,7 @@ Function: For determining chemical hazards and recommended precautions for use.
 
 Use: Look up information on all chemicals prior to use.
 
-Locations: If you have a Harvard ID Key access all SDS's on the Harvard EHS website
-
-https://www.ehs.harvard.edu/news/material-safety-data-sheets-msds
+Locations: If you have a Harvard ID Key access all SDS's on the Harvard EHS website https://www.ehs.harvard.edu/news/material-safety-data-sheets-msds
 
 Hard copies in the Fire Command Center LISE lobby.
 
@@ -179,9 +177,9 @@ In addition, rinse yellow chemical gloves with DI water if you suspect they are 
 
 Location : By the wet benches.
 
-<!-- image -->
-
 ## Other Chemical Handling Personnel Protective Equipment (PPE)
+
+<!-- image -->
 
 <!-- image -->
 
@@ -871,8 +869,6 @@ Figure 6:  Évacuation routes, LISE bassement.
 
 <!-- image -->
 
-Figure 7: Evacuation Routes, LISE ground floor.
-
 <!-- image -->
 
 Figure 8:  Évacuation routes, LISE mezzanine.
@@ -909,9 +905,7 @@ RF surveys of equipment that generate radiofrequencies (sputtering, reactive ion
 
 ## Microwave Exposure:
 
-Electromagnetic radiation in the 1 mm (about 0.04 in) to 1 m wavelength range (300 MHz to 300 GHz) is referred to as
-
-microwave radiation and is part of what is known as radiofrequency (RF) radiation. The latter covers the 0.5 MHz to 300 GHz range and is considered in the context of adverse biological effects. RF radiation is nonionizing radiation. This means that, in general, it does not have sufficient energy to kick an electron off an atom thus producing charged particles in a body and causing biological damage. The only proven harmful effect from exposure to microwave (or RF) radiation is thermal. RF radiation can enter deep into the body and heat human organs. Thus, the depth of penetration and the level absorption of radiation in the body are relevant.
+Electromagnetic radiation in the 1 mm (about 0.04 in) to 1 m wavelength range (300 MHz to 300 GHz) is referred to as microwave radiation and is part of what is known as radiofrequency (RF) radiation. The latter covers the 0.5 MHz to 300 GHz range and is considered in the context of adverse biological effects. RF radiation is nonionizing radiation. This means that, in general, it does not have sufficient energy to kick an electron off an atom thus producing charged particles in a body and causing biological damage. The only proven harmful effect from exposure to microwave (or RF) radiation is thermal. RF radiation can enter deep into the body and heat human organs. Thus, the depth of penetration and the level absorption of radiation in the body are relevant.
 
 Heating at above 10 GHz (3 cm wavelength or less) occurs in the outer skin surface. - From 3 GHz to 10 GHz (10 cm (about 3.94 in) to 3 cm) the penetration is deeper and the heating higher.
 
@@ -981,7 +975,7 @@ If you observe an allergy, please seek medical attention and report to EHS.
 
 ## Clothing on fire.
 
-- Stop, drop, and roll.
+- ¨ Stop, drop, and roll.
 
 ## Power failure.
 
@@ -1015,8 +1009,8 @@ Naturally created particles of this size range are normally called ultra-fine pa
 - 1- dimensional: nanowires, Nanotubes
 - 2- dimensional: nanoplates, Nanoclays
 - 3-dimensional: Buckyballs, Fullerenes, nanorods, crystalline structures
-- Nanomaterial Safety Information can be found in EHS website https://www.ehs.harvard.edu/programs/nano-science-technology
 - Þ
+- Nanomaterial Safety Information can be found in EHS website https://www.ehs.harvard.edu/programs/nano-science-technology
 
 ## Chemical Transportation.
 

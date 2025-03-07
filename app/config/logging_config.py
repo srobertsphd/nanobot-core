@@ -79,7 +79,7 @@ def get_logging_config() -> Dict[str, Any]:
             },
             "logfire": {
                 "class": "logfire.LogfireLoggingHandler",
-                "level": "WARNING",
+                "level": "INFO",
                 "formatter": "json",
             },
         },

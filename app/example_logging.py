@@ -6,6 +6,8 @@ This module demonstrates how to use the logging configuration in your code.
 
 from app.utils.logger import get_logger
 import logging
+from app.services.openai_service import get_embedding, get_chat_response
+import time
 
 # Get a logger for this module
 logger = get_logger(__name__)
@@ -81,10 +83,68 @@ def demonstrate_logging():
     )
 
 
+def demonstrate_openai_logging():
+    """
+    Demonstrate logging with OpenAI API calls.
+    """
+    logger.info("Starting OpenAI API logging demonstration")
+    
+    # Test embedding
+    text = "This is a test of the OpenAI embedding service with Logfire logging."
+    logger.info(f"Generating embedding for text: '{text[:30]}...'")
+    
+    start_time = time.time()
+    embedding = get_embedding(text)
+    duration = time.time() - start_time
+    
+    logger.info(
+        f"Generated embedding with {len(embedding)} dimensions",
+        extra={
+            "embedding_dimensions": len(embedding),
+            "text_length": len(text),
+            "duration_seconds": duration
+        }
+    )
+    
+    # Test chat completion
+    prompt = "What is the capital of France?"
+    context_chunks = [{"text": "Paris is the capital of France.", "metadata": {"source": "test"}}]
+    
+    logger.info(f"Generating chat completion for prompt: '{prompt}'")
+    
+    start_time = time.time()
+    response = get_chat_response(prompt, context_chunks)
+    duration = time.time() - start_time
+    
+    logger.info(
+        f"Received response: '{response[:50]}...'",
+        extra={
+            "prompt": prompt,
+            "response_length": len(response),
+            "duration_seconds": duration,
+            "context_chunks_count": len(context_chunks)
+        }
+    )
+    
+    return {
+        "embedding_dimensions": len(embedding),
+        "response": response
+    }
+
+
 def calculate_expensive_result():
     """Simulate an expensive calculation."""
-    return sum(i * i for i in range(1000000))
+    return {
+        "value": sum(i * i for i in range(1000)),
+        "computation_time": time.time()
+    }
 
 
 if __name__ == "__main__":
-    demonstrate_logging() 
+    print("Running logging example...")
+    demonstrate_logging()
+    
+    print("\nRunning OpenAI logging example...")
+    result = demonstrate_openai_logging()
+    print(f"Generated embedding with {result['embedding_dimensions']} dimensions")
+    print(f"Response: {result['response']}") 
