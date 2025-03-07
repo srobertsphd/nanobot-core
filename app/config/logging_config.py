@@ -103,15 +103,20 @@ def configure_logging():
     
     # Get Logfire token directly from environment
     from app.config.settings import reload_settings
-    # HACK eload settings to get the Logfire token -- I DONT KNOW WHY THIS IS NEEDED
+    # HACK reload settings to get the Logfire token -- I DONT KNOW WHY THIS IS NEEDED
     settings = reload_settings()
-    logfire_token = settings.logfire.token #os.environ.get('LOGFIRE_TOKEN')
+    logfire_token = settings.logfire.token
     
     # Configure Logfire if token is available
     if logfire_token:
         print(f"Configuring Logfire with token: {logfire_token[:5]}...")
         try:
-            logfire.configure(token=logfire_token)
+            # Configure with Pydantic plugin to capture all Pydantic models
+            logfire.configure(
+                token=logfire_token,
+                pydantic_plugin=logfire.PydanticPlugin(record="all")
+            )
+            print("Logfire project URL: https://logfire.pydantic.dev/sam/nanobot-poc")
         except Exception as e:
             print(f"Warning: Logfire configuration failed: {e}")
             if "logfire" in config["root"]["handlers"]:
