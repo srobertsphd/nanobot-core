@@ -110,10 +110,10 @@ class LogfireSettings(BaseSettings):
     
     Loads configuration from environment variables with LOGFIRE_ prefix.
     """
-    nanobot_poc_token: str
+    token: Optional[str] = None  # Make token optional with default None
 
     model_config = SettingsConfigDict(
-        env_prefix="LOGFIRE_"  # Looks for LOGFIRE_NANOBOT_POC_TOKEN
+        env_prefix="LOGFIRE_"  # This will look for LOGFIRE_TOKEN
     )
 
 class Settings(BaseSettings):

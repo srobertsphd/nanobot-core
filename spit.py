@@ -2,14 +2,15 @@ from app.config.settings import settings, reload_settings
 from app.database.db_common import get_connection
 from app.database.db_insert import insert_chunk
 from app.services.openai_service import get_embedding
-import json
 
+import json
 
 # Reload settings to ensure we have the latest values
 reload_settings()
-
+print(settings.logfire.token)
 # Check which database we're using
 print(f"Using Neon database: {settings.use_neon}")
+
 
 # Get a connection
 conn = get_connection()
