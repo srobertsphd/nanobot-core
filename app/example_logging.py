@@ -33,10 +33,52 @@ def demonstrate_logging():
     
     # You can also include exception information
     try:
-        result = 1 / 0
-    except Exception as e:
+        result = 1 / 0  # noqa: F841
+    except Exception as e:  # noqa: F841
         logger.exception("An error occurred during calculation")
         # The exception() method automatically includes the traceback
+    
+    # Demonstrate using extra attributes
+    logger.info(
+        "User performed an action",
+        extra={
+            "user_id": "user456",
+            "action": "checkout",
+            "cart_value": 125.99,
+            "items_count": 3,
+            "customer_type": "premium"
+        }
+    )
+    
+    # Demonstrate using extra with different log levels
+    logger.debug(
+        "API request details", 
+        extra={
+            "endpoint": "/api/products",
+            "method": "GET",
+            "response_time_ms": 45,
+            "status_code": 200
+        }
+    )
+    
+    logger.warning(
+        "Rate limit approaching",
+        extra={
+            "current_rate": 95,
+            "limit": 100,
+            "client_ip": "192.168.1.1",
+            "endpoint": "/api/search"
+        }
+    )
+    
+    logger.error(
+        "Database connection failed",
+        extra={
+            "db_host": "db.example.com",
+            "retry_count": 3,
+            "error_code": "CONN_REFUSED"
+        }
+    )
 
 
 def calculate_expensive_result():

@@ -105,6 +105,17 @@ class VectorIndexSettings(BaseSettings):
         env_prefix="VECTOR_INDEX_"
     )
 
+class LogfireSettings(BaseSettings):
+    """Logfire configuration settings.
+    
+    Loads configuration from environment variables with LOGFIRE_ prefix.
+    """
+    nanobot_poc_token: str
+
+    model_config = SettingsConfigDict(
+        env_prefix="LOGFIRE_"  # Looks for LOGFIRE_NANOBOT_POC_TOKEN
+    )
+
 class Settings(BaseSettings):
     """Main application settings container.
     
@@ -115,6 +126,7 @@ class Settings(BaseSettings):
     neon_db: NeonDatabaseSettings = NeonDatabaseSettings()
     openai: OpenAISettings = OpenAISettings()
     vector_index: VectorIndexSettings = VectorIndexSettings()
+    logfire: LogfireSettings = LogfireSettings()
     
     # Flag to determine which database to use (from USE_NEON environment variable)
     use_neon: bool = False  # Default value if USE_NEON is not set

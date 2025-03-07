@@ -7,6 +7,7 @@ but provides utility functions to get non-root loggers for use in code.
 """
 
 import logging.config
+import logging.handlers
 import sys
 from typing import Dict, Any
 
@@ -26,10 +27,24 @@ def get_logging_config() -> Dict[str, Any]:
         "formatters": {
             "standard": {
                 "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-                "datefmt": "%Y-%m-%d %H:%M:%S",
+                "datefmt": "%Y-%m-%dT%H:%M:%S%z",  # ISO-8601 format with timezone
             },
             "simple": {
-                "format": "%(levelname)s - %(message)s",
+                "format": "%(levelname)s: %(message)s",
+                "datefmt": "%Y-%m-%dT%H:%M:%S%z"
+            },
+            "json": {
+                "()": "app.utils.json_formatter.MyJSONFormatter",
+                "fmt_keys": {
+                    "level": "levelname",
+                    "message": "message",
+                    "timestamp": "timestamp",
+                    "logger": "name",
+                    "module": "module",
+                    "function": "funcName",
+                    "line": "lineno",
+                    "thread_name": "threadName"
+                }
             },
         },
         "filters": {
@@ -38,18 +53,33 @@ def get_logging_config() -> Dict[str, Any]:
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
-                "level": "DEBUG",
+                "level": "WARNING",
                 "formatter": "standard",
                 "stream": sys.stdout,
             },
-            # You can add file handlers or other handlers here if needed
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": "DEBUG",
+                "formatter": "standard",
+                "filename": "logs/app.log",
+                "maxBytes": 1048576,
+                "backupCount": 3,
+            },
+            "json_file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": "INFO",
+                "formatter": "json",
+                "filename": "logs/app.json.log",
+                "maxBytes": 1048576,
+                "backupCount": 3,
+            },
         },
         "loggers": {
             # Empty on purpose - we don't configure specific loggers here
         },
         "root": {
-            "level": "INFO",
-            "handlers": ["console"],
+            "level": "DEBUG",
+            "handlers": ["console", "file", "json_file"],
             "propagate": True,
         },
     }
