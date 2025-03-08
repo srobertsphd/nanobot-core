@@ -1,3 +1,10 @@
+This is a good reference for importing packages:
+
+https://www.youtube.com/watch?v=VEbuZox5qC4
+
+Tech with Tim
+
+
 from the chunking.py file in the document_conversion folder, I want to import the Chunks and ChunkMetadata classes from the models.db_schemas module.
 
 ```python
