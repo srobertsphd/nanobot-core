@@ -474,28 +474,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#processing-a-document" class="md-nav__link">
+  <a href="#document-processing-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
-      Processing a Document
+      Document Processing Pipeline
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Processing a Document">
+    <nav class="md-nav" aria-label="Document Processing Pipeline">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-the-streamlit-interface" class="md-nav__link">
+  <a href="#document-conversion" class="md-nav__link">
     <span class="md-ellipsis">
-      Using the Streamlit Interface
+      Document Conversion
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#programmatic-processing" class="md-nav__link">
+  <a href="#chunking-strategies" class="md-nav__link">
     <span class="md-ellipsis">
-      Programmatic Processing
+      Chunking Strategies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedding-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedding Generation
     </span>
   </a>
   
@@ -507,9 +516,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#chunking-strategies" class="md-nav__link">
+  <a href="#complete-processing-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Chunking Strategies
+      Complete Processing Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-the-streamlit-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Streamlit Interface
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
     </span>
   </a>
   
@@ -683,17 +710,117 @@
 
 
 <h1 id="document-processing">Document Processing<a class="headerlink" href="#document-processing" title="Permanent link">&para;</a></h1>
-<p>This guide explains how to process documents with NanoBot.</p>
+<p>This guide explains how NanoBot processes documents, from initial conversion to chunking and embedding.</p>
 <h2 id="supported-document-types">Supported Document Types<a class="headerlink" href="#supported-document-types" title="Permanent link">&para;</a></h2>
-<p>NanoBot supports the following document types:</p>
+<p>NanoBot supports various document types through its document conversion pipeline:</p>
 <ul>
-<li>PDF (.pdf)</li>
-<li>Microsoft Word (.docx)</li>
-<li>Text files (.txt)</li>
+<li><strong>PDF (.pdf)</strong>: Full support for text extraction, including tables and basic formatting</li>
+<li><strong>Microsoft Word (.docx)</strong>: Support for text, tables, and document structure</li>
+<li><strong>Text files (.txt)</strong>: Plain text processing</li>
+<li><strong>Web Pages (URLs)</strong>: Extract content directly from web pages</li>
 </ul>
-<h2 id="processing-a-document">Processing a Document<a class="headerlink" href="#processing-a-document" title="Permanent link">&para;</a></h2>
-<p>You can process documents either through the Streamlit interface or programmatically.</p>
-<h3 id="using-the-streamlit-interface">Using the Streamlit Interface<a class="headerlink" href="#using-the-streamlit-interface" title="Permanent link">&para;</a></h3>
+<h2 id="document-processing-pipeline">Document Processing Pipeline<a class="headerlink" href="#document-processing-pipeline" title="Permanent link">&para;</a></h2>
+<p>The document processing pipeline consists of three main stages:</p>
+<ol>
+<li><strong>Document Conversion</strong>: Converting documents to a structured format</li>
+<li><strong>Chunking</strong>: Breaking documents into manageable pieces</li>
+<li><strong>Embedding</strong>: Generating vector representations for each chunk</li>
+</ol>
+<h3 id="document-conversion">Document Conversion<a class="headerlink" href="#document-conversion" title="Permanent link">&para;</a></h3>
+<p>The first step in processing a document is converting it to a structured format that preserves the document's content and structure. This is handled by the <code>DocumentService</code> class using the Docling library.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.services.document_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocumentService</span>
+
+<span class="c1"># Initialize the service</span>
+<span class="n">document_service</span> <span class="o">=</span> <span class="n">DocumentService</span><span class="p">()</span>
+
+<span class="c1"># Convert a document</span>
+<span class="n">converted_doc</span> <span class="o">=</span> <span class="n">document_service</span><span class="o">.</span><span class="n">convert_document</span><span class="p">(</span><span class="s2">&quot;path/to/document.pdf&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>During conversion, NanoBot:
+- Extracts text content
+- Preserves document structure (headings, paragraphs)
+- Identifies metadata (title, author, etc.)
+- Optionally saves intermediate formats for debugging</p>
+<h3 id="chunking-strategies">Chunking Strategies<a class="headerlink" href="#chunking-strategies" title="Permanent link">&para;</a></h3>
+<p>After conversion, documents are split into chunks using one of several chunking strategies. Each strategy is optimized for different use cases:</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Description</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>default</strong></td>
+<td>Standard chunking with moderate chunk size</td>
+<td>General purpose use</td>
+</tr>
+<tr>
+<td><strong>balanced</strong></td>
+<td>Balanced approach between context preservation and chunk size</td>
+<td>Most document types</td>
+</tr>
+<tr>
+<td><strong>fine_grained</strong></td>
+<td>Smaller chunks for more precise retrieval</td>
+<td>Technical documents, reference materials</td>
+</tr>
+<tr>
+<td><strong>context</strong></td>
+<td>Larger chunks that preserve more context</td>
+<td>Q&amp;A, summarization tasks</td>
+</tr>
+<tr>
+<td><strong>hierarchical</strong></td>
+<td>Chunks based on document's natural hierarchy</td>
+<td>Structured documents with clear sections</td>
+</tr>
+</tbody>
+</table>
+<p>The chunking process is handled by the <code>ChunkingService</code> class:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.services.chunking_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChunkingService</span>
+
+<span class="c1"># Initialize the service</span>
+<span class="n">chunking_service</span> <span class="o">=</span> <span class="n">ChunkingService</span><span class="p">()</span>
+
+<span class="c1"># Get information about available strategies</span>
+<span class="n">strategies</span> <span class="o">=</span> <span class="n">chunking_service</span><span class="o">.</span><span class="n">get_available_strategies</span><span class="p">()</span>
+
+<span class="c1"># Chunk a document using a specific strategy</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">chunking_service</span><span class="o">.</span><span class="n">chunk_document</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span>
+
+<span class="c1"># Process chunks to extract metadata</span>
+<span class="n">processed_chunks</span> <span class="o">=</span> <span class="n">chunking_service</span><span class="o">.</span><span class="n">process_chunks</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">chunking_strategy</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="embedding-generation">Embedding Generation<a class="headerlink" href="#embedding-generation" title="Permanent link">&para;</a></h3>
+<p>The final step is generating vector embeddings for each chunk using OpenAI's embedding models. These embeddings capture the semantic meaning of the text, enabling similarity search.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate embeddings for chunks</span>
+<span class="n">chunks_with_embeddings</span> <span class="o">=</span> <span class="n">document_service</span><span class="o">.</span><span class="n">get_embeddings_for_chunks</span><span class="p">(</span><span class="n">processed_chunks</span><span class="p">)</span>
+</code></pre></div>
+<p>NanoBot uses OpenAI's text embedding models to generate high-dimensional vector representations of each chunk.</p>
+<h2 id="complete-processing-example">Complete Processing Example<a class="headerlink" href="#complete-processing-example" title="Permanent link">&para;</a></h2>
+<p>Here's a complete example of processing a document from start to finish:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.database.transaction</span><span class="w"> </span><span class="kn">import</span> <span class="n">transaction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.services.document_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocumentService</span>
+
+<span class="c1"># Initialize the service</span>
+<span class="n">document_service</span> <span class="o">=</span> <span class="n">DocumentService</span><span class="p">()</span>
+
+<span class="c1"># Process a document with the complete pipeline</span>
+<span class="k">with</span> <span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">chunks_with_embeddings</span> <span class="o">=</span> <span class="n">document_service</span><span class="o">.</span><span class="n">process_document</span><span class="p">(</span>
+        <span class="n">doc_path</span><span class="o">=</span><span class="s2">&quot;path/to/document.pdf&quot;</span><span class="p">,</span>
+        <span class="n">chunking_strategy</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
+        <span class="n">save_intermediate</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Now you can insert these chunks into the database</span>
+    <span class="c1"># (See the database documentation for details)</span>
+</code></pre></div>
+<h2 id="using-the-streamlit-interface">Using the Streamlit Interface<a class="headerlink" href="#using-the-streamlit-interface" title="Permanent link">&para;</a></h2>
+<p>For a more user-friendly experience, you can use the Streamlit interface to process documents:</p>
 <ol>
 <li>
 <p>Start the Streamlit app:
@@ -704,31 +831,18 @@
 <p>Navigate to the "Upload" section</p>
 </li>
 <li>Upload your document</li>
-<li>Select chunking strategy</li>
+<li>Select a chunking strategy from the dropdown</li>
 <li>Click "Process Document"</li>
 </ol>
-<h3 id="programmatic-processing">Programmatic Processing<a class="headerlink" href="#programmatic-processing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.database.transaction</span><span class="w"> </span><span class="kn">import</span> <span class="n">transaction</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">app.services.document_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_document</span>
-
-<span class="c1"># Process a document</span>
-<span class="k">with</span> <span class="n">transaction</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-    <span class="n">document_id</span> <span class="o">=</span> <span class="n">process_document</span><span class="p">(</span>
-        <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;path/to/document.pdf&quot;</span><span class="p">,</span>
-        <span class="n">chunking_strategy</span><span class="o">=</span><span class="s2">&quot;paragraph&quot;</span><span class="p">,</span>
-        <span class="n">conn</span><span class="o">=</span><span class="n">conn</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processed document with ID: </span><span class="si">{</span><span class="n">document_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</code></pre></div>
-<h2 id="chunking-strategies">Chunking Strategies<a class="headerlink" href="#chunking-strategies" title="Permanent link">&para;</a></h2>
-<p>NanoBot supports several chunking strategies:</p>
+<p>The interface will show progress as the document is processed and provide feedback on the number of chunks created.</p>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Paragraph</strong>: Splits text by paragraphs</li>
-<li><strong>Fixed Size</strong>: Creates chunks of a fixed number of tokens</li>
-<li><strong>Sentence</strong>: Splits text by sentences</li>
-<li><strong>Hybrid</strong>: Combines paragraph and sentence splitting</li>
+<li><strong>Choose the right chunking strategy</strong> for your document type and use case</li>
+<li><strong>Process similar documents with the same strategy</strong> for consistent results</li>
+<li><strong>Use meaningful filenames</strong> to help with filtering during retrieval</li>
+<li><strong>Consider document structure</strong> when choosing a chunking strategy</li>
+<li><strong>Monitor token usage</strong> when processing large documents</li>
 </ul>
-<p>Choose the strategy that works best for your documents and use case.</p>
 
 
 

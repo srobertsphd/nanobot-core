@@ -25,6 +25,9 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 plugins:
   - search
@@ -48,3 +51,7 @@ nav:
     - Database: api/database.md
     - Services: api/services.md
   - Examples: examples.md
+  - Blog: 
+    - Overview: blog/index.md
+    - MkDocs: blog/mkdocs-2025-03-08.md
+    - test-post: blog/new-post.md
