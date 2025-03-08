@@ -19,7 +19,7 @@ client = OpenAI(api_key=settings.openai.api_key)
 
 # You can use both approaches: instrument the client for automatic tracing
 # AND use decorators for additional context
-logfire.instrument_openai(client)
+# logfire.instrument_openai(client)
 
 @logfire.instrument("openai.embedding", extract_args=True)
 def get_embedding(text, model=None) -> list[float]:
@@ -27,7 +27,7 @@ def get_embedding(text, model=None) -> list[float]:
     # Use the model from settings if not specified
     if model is None:
         model = settings.openai.embedding_model
-    
+
     # Log the request
     logger.info(f"Generating embedding with model {model}")
     
