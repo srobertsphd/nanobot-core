@@ -1,4 +1,4 @@
-site_name: NanoBot Documentation
+site_name: NanoBot Documentation 🤖
 site_description: Documentation for the NanoBot POC project
 site_author: Your Name
 
@@ -8,11 +8,28 @@ docs_dir: docs
 theme:
   name: material
   palette:
-    primary: indigo
-    accent: indigo
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
+    - navigation.instant
     - toc.integrate
     - search.suggest
     - search.highlight
@@ -40,7 +57,7 @@ plugins:
           rendering:
             show_source: true
             show_root_heading: true
-  - mkdocs-video
+
 
 nav:
   - Home: index.md

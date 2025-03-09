@@ -8,7 +8,7 @@ To copy this template:
 **Date:** [Month Day, Year]  
 **Author:** Worldly Woman
 
-## Hello World 🌐
+<pre style="color: #3f51b5;"><code>"hello world 🌐"</code></pre>
 
 [Write your opening paragraph here. Introduce the topic and why it matters.]
 

@@ -1,4 +1,4 @@
-# NanoBot Documentation
+# NanoBot Documentation 🤖
 
 Welcome to the NanoBot documentation. This site provides comprehensive information about using and extending the NanoBot system.
 
