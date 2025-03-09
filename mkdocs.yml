@@ -1,6 +1,8 @@
 site_name: NanoBot Documentation 🤖
 site_description: Documentation for the NanoBot POC project
-site_author: Your Name
+site_author: Worldly Woman
+
+
 
 # Standard docs directory
 docs_dir: docs
@@ -42,6 +44,8 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+      baselevel: 2
+      separator: "_"
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -57,7 +61,6 @@ plugins:
           rendering:
             show_source: true
             show_root_heading: true
-
 
 nav:
   - Home: index.md

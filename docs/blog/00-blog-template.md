@@ -20,12 +20,12 @@ To copy this template:
 
 You can include images like this:   
 
-![Nanobot Schema](../images/first-nanobot-schema.png)
+![Nanobot Schema](../img/first-nanobot-schema.png)
 
 or like this:
 
 <center>
-  <img src="../images/first-nanobot-schema.png" alt="Logo" width="250">
+  <img src="../img/first-nanobot-schema.png" alt="Logo" width="250">
 </center>
 
 > NOTE: [Use blockquotes for important notes or callouts]

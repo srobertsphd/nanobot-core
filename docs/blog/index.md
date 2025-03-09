@@ -3,10 +3,3 @@ Welcome to the NanoBot development blog! Here I share updates, insights, and les
 
 Click through the things that I learned in the left sidebar.  
 
-
-
-<!-- ## Latest Posts
-
-- [First Post: Just found MkDocs!](2025-03-08.md) - March 8, 2023
-- [Implementing Vector Search](vector-search.md) - Coming soon
-- [Optimizing Document Processing](document-processing.md) - Coming soon -->
