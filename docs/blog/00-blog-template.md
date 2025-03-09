@@ -6,7 +6,7 @@ To copy this template:
 ```
 
 **Date:** [Month Day, Year]  
-**Author:** [Your Name]
+**Author:** Worldly Woman
 
 ## Hello World 🌐
 

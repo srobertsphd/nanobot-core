@@ -28,6 +28,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - md_in_html
 
 plugins:
   - search
@@ -39,6 +40,7 @@ plugins:
           rendering:
             show_source: true
             show_root_heading: true
+  - mkdocs-video
 
 nav:
   - Home: index.md
