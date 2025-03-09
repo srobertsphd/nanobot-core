@@ -9,6 +9,11 @@ docs_dir: docs
 
 theme:
   name: material
+  font: 
+    text: Merriweather Sans
+    code: Red Hat Mono
+  # icon:
+  #   logo: octicons/globe/16
   palette:
     # Light mode
     - media: "(prefers-color-scheme: light)"
@@ -28,6 +33,7 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
+    # - navigation.footer
     - navigation.tabs
     - navigation.sections
     - navigation.expand
@@ -38,18 +44,27 @@ theme:
 
 markdown_extensions:
   - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.tasklist
+  - pymdownx.details
   - admonition
   - toc:
       permalink: true
-      baselevel: 2
-      separator: "_"
+      # baselevel: 2
+      # separator: "_"
+  - attr_list
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - md_in_html
+  - footnotes
 
 plugins:
   - search
@@ -78,3 +93,12 @@ nav:
     - MkDocs: blog/mkdocs-2025-03-08.md
     - Logfire: blog/logfire-2025-03-07.md
     - Logging: blog/logging-2025-03-06.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/worldlywoman/nanobot
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/worldlywoman/
+
+copyright: "Copyright © 2025 WorldlyCode"
