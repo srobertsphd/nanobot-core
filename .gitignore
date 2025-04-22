@@ -4,6 +4,10 @@
 env/
 venv/
 ENV/
+/site/
+/docs/
+site/
+docs/
 
 # Python cache files
 __pycache__/

@@ -1,2 +1,0 @@
-# Examples
-this is example

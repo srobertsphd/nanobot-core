@@ -1,6 +1,6 @@
 import os
 import sys
-from pathlib import Path
+
 
 def generate_tree(startpath, exclude_dirs=None, max_depth=None):
     if exclude_dirs is None:
