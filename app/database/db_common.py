@@ -61,6 +61,7 @@ INSERT_CHUNK_QUERY = """
 def get_connection(use_neon=None) -> psycopg2.connect:
     """
     Connect to the PostgreSQL database using settings configuration.
+    gives the option to override the settings.use_neon flag
     
     Args:
         use_neon (bool, optional): Override settings.use_neon flag.

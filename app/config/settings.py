@@ -129,7 +129,7 @@ class Settings(BaseSettings):
     logfire: LogfireSettings = LogfireSettings()
     
     # Flag to determine which database to use (from USE_NEON environment variable)
-    use_neon: bool = False  # Default value if USE_NEON is not set
+    use_neon: bool = False  # Default value ONLY if USE_NEON is not set in .env
 
     model_config = SettingsConfigDict(
         env_file=".env",                # Load from .env file
