@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 """
-Example Logging Usage
+Logging Example
 
-This module demonstrates how to use the logging configuration in your code.
+This script demonstrates how to use the logging configuration in your code.
+Run it directly to see logging in action.
 """
 
 from app.utils.logger import get_logger
@@ -140,11 +142,18 @@ def calculate_expensive_result():
     }
 
 
-if __name__ == "__main__":
-    print("Running logging example...")
+def run_all_examples():
+    """Run all logging examples."""
+    print("\n=== Basic Logging Examples ===")
     demonstrate_logging()
     
-    print("\nRunning OpenAI logging example...")
+    print("\n=== OpenAI API Logging Examples ===")
     result = demonstrate_openai_logging()
     print(f"Generated embedding with {result['embedding_dimensions']} dimensions")
-    print(f"Response: {result['response']}") 
+    print(f"Response: {result['response']}")
+
+
+if __name__ == "__main__":
+    print("Running logging examples...")
+    run_all_examples()
+    print("\nLogging examples complete!")
