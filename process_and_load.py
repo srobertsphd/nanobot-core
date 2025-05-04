@@ -21,19 +21,18 @@ import os
 
 from app.services.document_service import DocumentService
 from app.utils.file_handling import get_files_from_base_path
-from app.database.common import get_connection
-from app.database.setup import create_tables, enable_pgvector_extension
-from app.database.insert import bulk_validate_and_insert_chunks
+from app.database.setup import initialize_database
 
 # Default directory for documents
 DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"
 
-# TODO need to add the chunking strategy to the process_document function
-def process_file(conn, file_path, chunking_strategy="default"):
+# Create document service once
+document_service = DocumentService()
+
+def process_file(file_path, chunking_strategy="default"):
     """Process a single file and load it into the database.
     
     Args:
-        conn: Database connection
         file_path: Path to the file to process
         chunking_strategy: Strategy to use for chunking (default, balanced, fine_grained, etc.)
     
@@ -41,11 +40,19 @@ def process_file(conn, file_path, chunking_strategy="default"):
         Number of chunks inserted into the database
     """
     print(f"\n=== Processing {file_path} with '{chunking_strategy}' strategy ===")
-    document_service = DocumentService()
-    chunks_with_embeddings = document_service.process_and_store_document(file_path, chunking_strategy)
-    id_list = bulk_validate_and_insert_chunks(conn, chunks_with_embeddings)
-    print(f"Inserted {len(id_list)} chunks into database")
-    return len(id_list)
+    
+    try:
+        # Use the document service to handle the entire pipeline
+        chunk_ids = document_service.process_and_store_document(
+            file_path, 
+            chunking_strategy=chunking_strategy
+        )
+        
+        print(f"Inserted {len(chunk_ids)} chunks into database")
+        return len(chunk_ids)
+    except Exception as e:
+        print(f"Error processing {file_path}: {str(e)}")
+        return 0
 
 def main():
     """Main processing function."""
@@ -53,8 +60,8 @@ def main():
     if len(sys.argv) < 2:
         print("Error: Missing argument")
         print("Usage:")
-        print("  python -m process_data_and_load_db file.pdf [--strategy STRATEGY]  # Process a single file")
-        print("  python -m process_data_and_load_db --all [--strategy STRATEGY]     # Process all files")
+        print("  python -m process_and_load file.pdf [--strategy STRATEGY]  # Process a single file")
+        print("  python -m process_and_load --all [--strategy STRATEGY]     # Process all files")
         return
     
     # Parse arguments
@@ -69,9 +76,7 @@ def main():
             print(f"Using chunking strategy: {chunking_strategy}")
     
     # Initialize database
-    conn = get_connection()
-    enable_pgvector_extension(conn)
-    create_tables(conn)
+    initialize_database()
     
     # Process based on argument
     if arg == "--all":
@@ -87,7 +92,7 @@ def main():
         
         total_chunks = 0
         for file in files:
-            chunks = process_file(conn, file, chunking_strategy=chunking_strategy)
+            chunks = process_file(file, chunking_strategy=chunking_strategy)
             total_chunks += chunks
             
         print(f"\nAll documents processed! Inserted {total_chunks} total chunks into database.")
@@ -99,7 +104,7 @@ def main():
             print(f"Error: File not found: {file_path}")
             return
             
-        process_file(conn, file_path, chunking_strategy=chunking_strategy)
+        process_file(file_path, chunking_strategy=chunking_strategy)
         print("\nFile processing complete!")
 
 if __name__ == "__main__":
