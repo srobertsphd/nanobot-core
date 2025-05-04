@@ -21,9 +21,9 @@ import os
 
 from app.document_conversion.document_pipeline import process_document
 from app.utils.file_handling import get_files_from_base_path
-from app.database.db_common import get_connection
-from app.database.db_setup import create_tables, enable_pgvector_extension
-from app.database.db_insert import bulk_validate_and_insert_chunks
+from app.database.common import get_connection
+from app.database.setup import create_tables, enable_pgvector_extension
+from app.database.insert import bulk_validate_and_insert_chunks
 
 # Default directory for documents
 DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"

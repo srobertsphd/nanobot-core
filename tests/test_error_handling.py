@@ -1,7 +1,7 @@
 import pytest
 from app.services.document_service import DocumentService
-from app.database.db_insert import bulk_validate_and_insert_chunks
-from app.database.db_common import get_connection
+from app.database.insert import bulk_validate_and_insert_chunks
+from app.database.common import get_connection
 from app.models.validators import validate_chunk
 
 @pytest.fixture

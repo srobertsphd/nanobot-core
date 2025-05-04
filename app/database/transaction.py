@@ -10,7 +10,7 @@ import logging
 import psycopg2
 from contextlib import contextmanager
 from typing import Optional, Callable, Any
-from app.database.db_common import get_connection
+from app.database.common import get_connection
 from app.config.settings import settings
 
 # Configure logging
