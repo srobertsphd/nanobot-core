@@ -6,7 +6,7 @@ import os
 import pytest
 import json
 from app.services.chunking_service import ChunkingService
-from app.document_conversion.extract import simple_docling_convert
+from app.services.document_service import DocumentService
 from docling.chunking import HybridChunker, HierarchicalChunker
 from app.utils.tokenizer import OpenAITokenizerWrapper
 
@@ -23,7 +23,8 @@ def test_document():
     if not os.path.exists(SAMPLE_DOC_PATH):
         pytest.skip(f"Sample document not found at {SAMPLE_DOC_PATH}")
     
-    result = simple_docling_convert(SAMPLE_DOC_PATH)
+    document_service = DocumentService()
+    result = document_service.simple_convert(SAMPLE_DOC_PATH)
     return result.document
 
 def test_get_chunker_types(chunking_service):
@@ -106,7 +107,8 @@ def test_merge_peers_parameter(chunking_service, test_document):
 def test_real_document_chunking(chunking_service):
     """Test chunking with a real document."""
     # Convert the document
-    result = simple_docling_convert(SAMPLE_DOC_PATH)
+    document_service = DocumentService()
+    result = document_service.simple_convert(SAMPLE_DOC_PATH)
     
     # Test each strategy
     strategies = ["default", "fine_grained", "balanced", "context", "hierarchical"]

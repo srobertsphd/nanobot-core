@@ -19,7 +19,7 @@ Available chunking strategies:
 import sys
 import os
 
-from app.document_conversion.document_pipeline import process_document
+from app.services.document_service import DocumentService
 from app.utils.file_handling import get_files_from_base_path
 from app.database.common import get_connection
 from app.database.setup import create_tables, enable_pgvector_extension
@@ -41,7 +41,8 @@ def process_file(conn, file_path, chunking_strategy="default"):
         Number of chunks inserted into the database
     """
     print(f"\n=== Processing {file_path} with '{chunking_strategy}' strategy ===")
-    chunks_with_embeddings = process_document(file_path, chunking_strategy=chunking_strategy)
+    document_service = DocumentService()
+    chunks_with_embeddings = document_service.process_and_store_document(file_path, chunking_strategy)
     id_list = bulk_validate_and_insert_chunks(conn, chunks_with_embeddings)
     print(f"Inserted {len(id_list)} chunks into database")
     return len(id_list)

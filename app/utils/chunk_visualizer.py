@@ -69,4 +69,4 @@ def display_chunk_samples(df: pd.DataFrame, n_samples: int = 5, text_preview_len
     
     # Display samples
     print(f"Sample of {n_samples} chunks:")
-    return preview_df[display_cols].sample(min(n_samples, len(df))).reset_index(drop=True) 
+    return preview_df[display_cols].sample(min(n_samples, len(df))).reset_index(drop=True)
