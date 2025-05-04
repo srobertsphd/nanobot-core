@@ -8,7 +8,7 @@ including creating tables, enabling extensions, and setting up indexes.
 import psycopg2
 from app.config.settings import settings
 from app.database.db_common import get_connection
-from app.database.db_common import (
+from app.database.schema import (
     CREATE_EXTENSION_QUERY,
     CREATE_METADATA_CHECK,
     CREATE_TABLE_QUERY

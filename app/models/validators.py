@@ -5,7 +5,7 @@ This module provides functions for validating data structures before
 they are processed or stored in the database.
 """
 
-from .db_schemas import Chunks
+from .models import Chunks
 
 
 def validate_chunk(chunk_data: dict) -> Chunks:

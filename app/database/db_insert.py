@@ -6,7 +6,7 @@ including single chunk insertion and bulk operations.
 """
 
 import json
-from app.database.db_common import INSERT_CHUNK_QUERY
+from app.database.schema import INSERT_CHUNK_QUERY
 from app.models.validators import validate_chunk
 
 def insert_chunk(conn, text, vector, metadata) -> int:

@@ -174,9 +174,13 @@ def get_unique_metadata_values(conn, field_name):
         return []
 
 def get_chunking_strategies(conn):
-    """Get available chunking strategies from the database."""
+    """Get available chunking strategies from the database.
+    used in the search_similar_chunks_with_filters function
+    """
     return get_unique_metadata_values(conn, "chunking_strategy")
 
 def get_filenames(conn):
-    """Get available filenames from the database."""
+    """Get available filenames from the database.
+    used in the search_similar_chunks_with_filters function
+    """
     return get_unique_metadata_values(conn, "filename") 

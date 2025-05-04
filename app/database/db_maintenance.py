@@ -8,7 +8,7 @@ delete or modify data.
 """
 
 import psycopg2
-from app.database.db_common import (
+from app.database.schema import (
     get_connection,
     CREATE_TABLE_QUERY,
     CREATE_EXTENSION_QUERY,
