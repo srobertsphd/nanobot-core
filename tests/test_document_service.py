@@ -32,7 +32,7 @@ def test_process_document_pipeline(document_service):
         pytest.skip(f"Sample document not found at {SAMPLE_DOC_PATH}")
     
     # Process document with default strategy
-    chunks = document_service.process_document(
+    chunks = document_service.convert_chunk_and_embed_document(
         SAMPLE_DOC_PATH, 
         chunking_strategy="default",
         save_intermediate=False

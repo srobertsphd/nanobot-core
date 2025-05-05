@@ -16,28 +16,10 @@ class ChunkingService:
     def __init__(self):
         """Initialize the chunking service with a tokenizer."""
         self.tokenizer = OpenAITokenizerWrapper()
-        
-    def get_chunker(self, strategy="default"):
-        """Get a chunker based on the specified strategy.
-        
-        Args:
-            strategy: One of "default", "fine_grained", "balanced", "context", "hierarchical"
-        
-        Returns:
-            A configured chunker instance
-        """
-        strategies = {
-            "default": self._get_default_chunker,
-            "fine_grained": self._get_fine_grained_chunker,
-            "balanced": self._get_balanced_chunker,
-            "context": self._get_context_chunker,
-            "hierarchical": self._get_hierarchical_chunker,
-        }
-        
-        if strategy not in strategies:
-            raise ValueError(f"Unknown chunking strategy: {strategy}. Available strategies: {list(strategies.keys())}")
-            
-        return strategies[strategy]()
+    
+    #--------------------------------------------------------------------------
+    # Basic Operations - Chunker creation and configuration
+    #--------------------------------------------------------------------------
     
     def _get_default_chunker(self):
         """Get the default chunker configuration.
@@ -94,6 +76,36 @@ class ChunkingService:
         Creates chunks based on the document's natural hierarchy.
         """
         return HierarchicalChunker()
+    
+    #--------------------------------------------------------------------------
+    # Mid-level Operations - Strategy selection
+    #--------------------------------------------------------------------------
+    
+    def get_chunker(self, strategy="default"):
+        """Get a chunker based on the specified strategy.
+        
+        Args:
+            strategy: One of "default", "fine_grained", "balanced", "context", "hierarchical"
+        
+        Returns:
+            A configured chunker instance
+        """
+        strategies = {
+            "default": self._get_default_chunker,
+            "fine_grained": self._get_fine_grained_chunker,
+            "balanced": self._get_balanced_chunker,
+            "context": self._get_context_chunker,
+            "hierarchical": self._get_hierarchical_chunker,
+        }
+        
+        if strategy not in strategies:
+            raise ValueError(f"Unknown chunking strategy: {strategy}. Available strategies: {list(strategies.keys())}")
+            
+        return strategies[strategy]()
+    
+    #--------------------------------------------------------------------------
+    # High-level Operations - Document chunking and metadata extraction
+    #--------------------------------------------------------------------------
     
     def chunk_document(self, document, strategy="default") -> list[DocChunk]:
         """Chunk a document using the specified strategy.
