@@ -28,8 +28,14 @@ def create_database(db_name: str) -> None:
     try:
         cur.execute(f"CREATE DATABASE {db_name}")
         print(f"Database {db_name} created successfully")
+        
+        # Grant privileges if admin and app users are different
+        if settings.admin_db.user != settings.local_db.user:
+            cur.execute(f"GRANT ALL PRIVILEGES ON DATABASE {db_name} TO {settings.local_db.user}")
+            print(f"Granted privileges on {db_name} to user {settings.local_db.user}")
     except psycopg2.Error as e:
         print(f"Error creating database: {e}")
+        raise
     finally:
         cur.close()
         conn.close()
@@ -80,50 +86,31 @@ def create_vector_index(conn, index_type=None) -> None:
         cur.execute(index_query)
         print(f"✅ Created {index_type} vector index on chunks table")
 
-def initialize_database():
-    """Initialize the database with all required components."""
-    conn = get_connection()
+def initialize_database(use_neon=None):
+    """Initialize the database with all required components.
+    
+    Args:
+        use_neon: Override to use Neon database. If None, uses settings.use_neon
+    """
+    db_type = "Neon" if (use_neon or (use_neon is None and settings.use_neon)) else "local"
+    print(f"Initializing {db_type} database...")
+    
+    conn = get_connection(use_neon=use_neon)
     try:
         enable_pgvector_extension(conn)
+        print(f"✅ pgvector extension enabled in {db_type} database")
+        
         create_tables(conn)
+        print(f"✅ Tables created in {db_type} database")
+        
         create_vector_index(conn)
+        print(f"✅ Vector index created in {db_type} database")
+        
         conn.commit()
-        print("✅ Database initialized successfully")
+        print(f"✅ {db_type} database initialized successfully")
     except Exception as e:
         conn.rollback()
-        print(f"❌ Error initializing database: {e}")
-        raise
-    finally:
-        conn.close()
-
-def initialize_neon_database():
-    """Initialize the Neon database with all required components."""
-    print("Initializing Neon database...")
-    
-    # Connect to Neon database
-    conn = get_connection(use_neon=True)
-    
-    try:
-        # Enable pgvector extension
-        enable_pgvector_extension(conn)
-        print("✅ pgvector extension enabled in Neon database")
-        
-        # Create tables
-        create_tables(conn)
-        print("✅ Tables created in Neon database")
-        
-        # Create vector index
-        create_vector_index(conn)
-        print("✅ Vector index created in Neon database")
-        
-        # Commit all changes
-        conn.commit()
-        print("✅ Neon database initialized successfully")
-        
-        return True
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ Error initializing Neon database: {e}")
+        print(f"❌ Error initializing {db_type} database: {e}")
         raise
     finally:
         conn.close() 

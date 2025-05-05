@@ -21,13 +21,34 @@ import os
 
 from app.services.document_service import DocumentService
 from app.utils.file_handling import get_files_from_base_path
-from app.database.setup import initialize_database
+from app.database.setup import initialize_database, create_database
+from app.config.settings import settings
+import psycopg2
 
 # Default directory for documents
 DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"
 
 # Create document service once
 document_service = DocumentService()
+
+def ensure_database_exists():
+    """Check if the database exists and create it if it doesn't."""
+    db_name = settings.local_db.name
+    
+    # Try to connect to the database using regular credentials
+    try:
+        conn = psycopg2.connect(**settings.local_db.get_connection_dict())
+        conn.close()
+        print(f"Database {db_name} already exists.")
+    except psycopg2.OperationalError as e:
+        # Check if the error is due to the database not existing
+        if "does not exist" in str(e):
+            print(f"Database {db_name} does not exist. Creating...")
+            create_database(db_name)
+        else:
+            # Other connection error
+            print(f"Error connecting to database: {e}")
+            raise
 
 def process_file(file_path, chunking_strategy="default"):
     """Process a single file and load it into the database.
@@ -74,6 +95,9 @@ def main():
         if strategy_index + 1 < len(sys.argv):
             chunking_strategy = sys.argv[strategy_index + 1]
             print(f"Using chunking strategy: {chunking_strategy}")
+    
+    # Ensure database exists
+    ensure_database_exists()
     
     # Initialize database
     initialize_database()
