@@ -507,7 +507,7 @@ def visualize_chunk_distribution(conn=None):
         if close_conn and conn:
             conn.close()
 
-# run python -m app.database.db_inspector from the root directory to execute this file
+# run python -m analysis.database_inspector from the root directory to execute this file
 if __name__ == "__main__":
     # When run directly, perform a database inspection
     inspect_database()

@@ -1,5 +1,7 @@
 """
-Database Transaction Management
+Transaction Management Module
+
+*This module is currently not used in production code.*
 
 This module provides utilities for managing database transactions with
 error handling, logging, timeouts, and automatic rollback.
