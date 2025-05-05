@@ -36,7 +36,7 @@ if __name__ == "__main__":
             "Number of chunks to retrieve", 
             min_value=1, 
             max_value=10, 
-            value=5,
+            value=3,
             step=1
         )
         
