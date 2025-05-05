@@ -15,19 +15,35 @@ if __name__ == "__main__":
         conn = get_connection()
         try:
             chunking_strategies = get_chunking_strategies(conn)
-            filenames = get_filenames(conn)
+            all_filenames = get_filenames(conn)
+            
+            # Get mapping of strategies to filenames
+            strategy_to_files = {}
+            for strategy in chunking_strategies:
+                # Query to get filenames for this strategy
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT DISTINCT metadata->>'filename' 
+                        FROM chunks 
+                        WHERE metadata->>'chunking_strategy' = %s
+                        ORDER BY metadata->>'filename'
+                    """, (strategy,))
+                    strategy_files = [row[0] for row in cur.fetchall()]
+                    strategy_to_files[strategy] = strategy_files
             
             if not chunking_strategies:
                 st.error("No chunking strategies found in the database")
                 chunking_strategies = ["default"]
+                strategy_to_files = {"default": []}
                 
-            if not filenames:
+            if not all_filenames:
                 st.warning("No files found in the database")
-                filenames = []
+                all_filenames = []
         except Exception as e:
             st.error(f"Error loading metadata options: {e}")
             chunking_strategies = ["default"]
-            filenames = []
+            all_filenames = []
+            strategy_to_files = {"default": []}
         finally:
             conn.close()
         
@@ -40,34 +56,36 @@ if __name__ == "__main__":
             step=1
         )
         
-        # Chunking strategy selector (required)
+        # Chunking strategy selector (required) - set default as starting strategy
+        default_index = 0
+        if "default" in chunking_strategies:
+            default_index = chunking_strategies.index("default")
+        
         chunking_strategy = st.selectbox(
-            "Chunking Strategy (required)",
+            "Chunking Strategy",
             options=chunking_strategies,
-            index=0,
+            index=default_index,
             key="chunking_strategy"
         )
         
-        # Filename multi-selector
-        st.write("Source Files (select at least one or 'All Files')")
-        all_files = st.checkbox("All Files", value=True, key="all_files")
+        # Get files available for this strategy
+        available_files = strategy_to_files.get(chunking_strategy, [])
         
-        selected_files = []
-        if not all_files:
-            # Only show the multi-select if "All Files" is not checked
-            if filenames:
-                selected_files = st.multiselect(
-                    "Select specific files",
-                    options=filenames,
-                    default=[filenames[0]] if filenames else None,
-                    key="selected_files"
-                )
-                
-                # Validate at least one file is selected
-                if not selected_files:
-                    st.error("Please select at least one file or choose 'All Files'")
-            else:
-                st.error("No files available to select")
+        # File selector - start with empty selection
+        if available_files:
+            selected_files = st.multiselect(
+                "Select documents to search",
+                options=available_files,
+                default=[],  # Start with empty selection
+                key="selected_files"
+            )
+            
+            # Validate at least one file is selected
+            if not selected_files:
+                st.error("Please select at least one document")
+        else:
+            st.error(f"No documents available with '{chunking_strategy}' strategy")
+            selected_files = []
     
     # Simple chat interface
     if "messages" not in st.session_state:
@@ -88,9 +106,9 @@ if __name__ == "__main__":
             st.markdown(prompt)
         
         # Validate file selection
-        if not all_files and not selected_files:
+        if not selected_files:
             with st.chat_message("assistant"):
-                error_msg = "Please select at least one file or choose 'All Files' in the sidebar."
+                error_msg = "Please select at least one document in the sidebar."
                 st.error(error_msg)
                 st.session_state.messages.append({"role": "assistant", "content": error_msg})
             st.stop()
@@ -100,31 +118,21 @@ if __name__ == "__main__":
             # Connect to the database
             conn = get_connection()
             try:
-                # Use the filtered search function with the sidebar configuration
-                if all_files:
-                    # Search across all files
-                    context_chunks = search_similar_chunks_with_filters(
+                # Search in selected files
+                all_chunks = []
+                
+                for file in selected_files:
+                    file_chunks = search_similar_chunks_with_filters(
                         conn, 
                         prompt, 
                         limit=num_chunks,
                         chunking_strategy=chunking_strategy,
-                        filename=None  # None means all files
+                        filename=file
                     )
-                else:
-                    # Search in multiple specific files
-                    all_chunks = []
-                    for file in selected_files:
-                        file_chunks = search_similar_chunks_with_filters(
-                            conn, 
-                            prompt, 
-                            limit=num_chunks,
-                            chunking_strategy=chunking_strategy,
-                            filename=file
-                        )
-                        all_chunks.extend(file_chunks)
-                    
-                    # Sort combined results by similarity and limit to num_chunks
-                    context_chunks = sorted(all_chunks, key=lambda x: x['similarity'], reverse=True)[:num_chunks]
+                    all_chunks.extend(file_chunks)
+                
+                # Sort combined results by similarity and limit to num_chunks
+                context_chunks = sorted(all_chunks, key=lambda x: x['similarity'], reverse=True)[:num_chunks]
                 
                 print(f"Found {len(context_chunks)} relevant chunks")
             except Exception as e:
