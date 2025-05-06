@@ -6,7 +6,7 @@ including creating tables, enabling extensions, and setting up indexes.
 """
 
 import psycopg2
-from app.config.settings import settings
+from app.config.settings import settings, reload_settings
 from app.database.common import get_connection
 from app.database.schema import (
     CREATE_EXTENSION_QUERY,
@@ -20,6 +20,9 @@ def create_database(db_name: str) -> None:
     Args:
         db_name: Name of the database to create
     """
+    # Reload settings to ensure we have the latest values
+    reload_settings()
+    
     # Use admin login information for database creation
     conn = psycopg2.connect(**settings.admin_db.get_connection_dict())
     conn.autocommit = True  
@@ -92,6 +95,9 @@ def initialize_database(use_neon=None):
     Args:
         use_neon: Override to use Neon database. If None, uses settings.use_neon
     """
+    # Reload settings to ensure we have the latest values
+    reload_settings()
+    
     db_type = "Neon" if (use_neon or (use_neon is None and settings.use_neon)) else "local"
     print(f"Initializing {db_type} database...")
     

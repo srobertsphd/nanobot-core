@@ -22,7 +22,7 @@ import os
 from app.services.document_service import DocumentService
 from app.utils.file_handling import get_files_from_base_path
 from app.database.setup import initialize_database, create_database
-from app.config.settings import settings
+from app.config.settings import settings, reload_settings
 import psycopg2
 
 # Default directory for documents
@@ -33,6 +33,9 @@ document_service = DocumentService()
 
 def ensure_database_exists():
     """Check if the database exists and create it if it doesn't."""
+    # Reload settings to get latest values from .env
+    reload_settings()
+    
     db_name = settings.local_db.name
     
     # Try to connect to the database using regular credentials
