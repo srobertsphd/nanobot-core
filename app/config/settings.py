@@ -8,7 +8,10 @@ type validation and default values.
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
+from pathlib import Path
 
+# Determine the project root directory (where the app directory is located)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.absolute()
 
 class DatabaseSettings(BaseSettings):
     """Database connection settings for the application database.
@@ -116,6 +119,49 @@ class LogfireSettings(BaseSettings):
         env_prefix="LOGFIRE_"  # This will look for LOGFIRE_TOKEN
     )
 
+class FilePathSettings(BaseSettings):
+    """File path settings for data storage.
+    
+    Configures paths for document storage, processing and chunking.
+    """
+    # Base data directory (relative to project root)
+    base_dir: str = "data"
+    
+    # Subdirectories
+    original_docs_dir: str = "original_docs"
+    converted_docs_dir: str = "converted_docs"
+    chunking_results_dir: str = "chunking_results"
+    
+    model_config = SettingsConfigDict(
+        env_prefix="DATA_"  # Looks for DATA_BASE_DIR, DATA_ORIGINAL_DOCS_DIR, etc.
+    )
+    
+    def get_base_dir_path(self) -> Path:
+        """Returns the absolute path to the base data directory."""
+        return PROJECT_ROOT / self.base_dir
+    
+    def get_original_docs_path(self) -> Path:
+        """Returns the path to the original documents directory."""
+        return self.get_base_dir_path() / self.original_docs_dir
+    
+    def get_converted_docs_path(self) -> Path:
+        """Returns the path to the converted documents directory."""
+        return self.get_base_dir_path() / self.converted_docs_dir
+    
+    def get_chunking_results_path(self) -> Path:
+        """Returns the path to the chunking results directory."""
+        return self.get_base_dir_path() / self.chunking_results_dir
+    
+    def create_directories(self) -> None:
+        """Creates all required data directories if they don't exist."""
+        for path in [
+            self.get_base_dir_path(),
+            self.get_original_docs_path(),
+            self.get_converted_docs_path(),
+            self.get_chunking_results_path()
+        ]:
+            path.mkdir(parents=True, exist_ok=True)
+
 class Settings(BaseSettings):
     """Main application settings container.
     
@@ -127,6 +173,7 @@ class Settings(BaseSettings):
     openai: OpenAISettings = OpenAISettings()
     vector_index: VectorIndexSettings = VectorIndexSettings()
     logfire: LogfireSettings = LogfireSettings()
+    file_paths: FilePathSettings = FilePathSettings()
     
     # Flag to determine which database to use (from USE_NEON environment variable)
     use_neon: bool = False  # Default value ONLY if USE_NEON is not set in .env
@@ -137,6 +184,11 @@ class Settings(BaseSettings):
         case_sensitive=False,           # Case-insensitive env vars
         extra='ignore'                  # Ignore extra env vars
     )
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Create directories during initialization
+        self.file_paths.create_directories()
 
 # Create a singleton instance for global access
 settings = Settings()
@@ -145,4 +197,5 @@ def reload_settings():
     """Reload settings from environment variables."""
     global settings
     settings = Settings()
+    settings.file_paths.create_directories()
     return settings
