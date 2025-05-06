@@ -1,6 +1,7 @@
 from docling.datamodel.document import ConversionResult
 import pickle
 from pathlib import Path
+from app.config.settings import settings
 
 def get_files_from_base_path(base_path: str) -> list[str]:
     """
@@ -21,7 +22,7 @@ def get_files_from_base_path(base_path: str) -> list[str]:
 
 def save_processed_document(doc_path: str, docling_document, md_data: str):
     """
-    Saves the docling document and markdown data in a new folder under parsed-doc
+    Saves the docling document and markdown data in a new folder under converted_docs
     
     Args:
         doc_path: Original document path
@@ -31,8 +32,8 @@ def save_processed_document(doc_path: str, docling_document, md_data: str):
     # Extract filename without extension
     base_name = Path(doc_path).stem
     
-    # Create the target directory
-    output_dir = Path("/home/sng/nanobot-poc/data/parsed-doc") / base_name
+    # Create the target directory using settings
+    output_dir = settings.file_paths.get_converted_docs_path() / base_name
     # Create the directory if it doesn't exist
     output_dir.mkdir(parents=True, exist_ok=True)
     
