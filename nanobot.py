@@ -1,7 +1,29 @@
 import streamlit as st
+from app.utils.logger import get_logger, configure_logging
+
+# ------------------------------------------------------------
+# initialize logging before other imports that call the logger
+# ------------------------------------------------------------
+
+if "logging_initialized" not in st.session_state:
+    configure_logging()  # Only logging (including Logfire handler)
+    st.session_state["logging_initialized"] = True
+    
+logger = get_logger(__name__)
+
+# ------------------------------------------------------------
+# ------------------------------------------------------------
+
 from app.database.common import get_connection
 from app.database.retrieval import search_similar_chunks_with_filters, get_chunking_strategies, get_filenames
 from app.services.openai_service import get_chat_response
+from app.utils.logger import get_logger, configure_logging
+
+if "logging_initialized" not in st.session_state:
+    configure_logging()  # Only logging (including Logfire handler)
+    st.session_state["logging_initialized"] = True
+    
+logger = get_logger(__name__)
 
 # Test the function
 if __name__ == "__main__":
@@ -173,3 +195,5 @@ if __name__ == "__main__":
         with st.chat_message("assistant"):
             st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
+
+

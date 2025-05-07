@@ -24,12 +24,16 @@ from app.utils.file_handling import get_files_from_base_path
 from app.database.setup import initialize_database, create_database
 from app.config.settings import settings, reload_settings
 import psycopg2
+# from app.services.openai_service import initialize_openai_and_logfire
 
 # Default directory for documents
 DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"
 
 # Create document service once
 document_service = DocumentService()
+
+reload_settings()  # Ensure settings are loaded
+# initialize_openai_and_logfire()
 
 def ensure_database_exists():
     """Check if the database exists and create it if it doesn't."""

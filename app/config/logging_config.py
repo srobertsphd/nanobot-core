@@ -83,11 +83,10 @@ def get_logging_config() -> Dict[str, Any]:
                 "formatter": "json",
             },
         },
-        "loggers": {
-            # Empty on purpose - we don't configure specific loggers here
-        },
+        #usually empty but this is needed for watchdog which streamlit uses
+        "loggers": {},
         "root": {
-            "level": "DEBUG",
+            "level": "INFO",
             "handlers": ["console", "file", "json_file", "logfire"],
             "propagate": True,
         },
@@ -112,10 +111,8 @@ def configure_logging():
         print(f"Configuring Logfire with token: {logfire_token[:5]}...")
         try:
             # Configure with Pydantic plugin to capture all Pydantic models
-            logfire.configure(
-                token=logfire_token,
-                pydantic_plugin=logfire.PydanticPlugin(record="all")
-            )
+            logfire.configure(token=logfire_token)
+            logfire.instrument_pydantic(record="all")
             print("Logfire project URL: https://logfire.pydantic.dev/sam/nanobot-poc")
         except Exception as e:
             print(f"Warning: Logfire configuration failed: {e}")
