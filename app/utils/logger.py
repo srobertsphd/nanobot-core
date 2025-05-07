@@ -7,7 +7,6 @@ named loggers for specific modules or components.
 """
 
 import logging
-from app.config.logging_config import configure_logging
 
 # Initialize logging configuration when this module is imported
 # configure_logging()
