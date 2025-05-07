@@ -113,7 +113,6 @@ def configure_logging():
             # Configure with Pydantic plugin to capture all Pydantic models
             logfire.configure(token=logfire_token)
             logfire.instrument_pydantic(record="all")
-            print("Logfire project URL: https://logfire.pydantic.dev/sam/nanobot-poc")
         except Exception as e:
             print(f"Warning: Logfire configuration failed: {e}")
             if "logfire" in config["root"]["handlers"]:
