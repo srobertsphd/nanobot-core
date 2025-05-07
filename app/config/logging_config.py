@@ -112,7 +112,7 @@ def configure_logging():
         try:
             # Configure with Pydantic plugin to capture all Pydantic models
             logfire.configure(token=logfire_token)
-            logfire.instrument_pydantic(record="all")
+            logfire.instrument_pydantic(record="metrics")
         except Exception as e:
             print(f"Warning: Logfire configuration failed: {e}")
             if "logfire" in config["root"]["handlers"]:

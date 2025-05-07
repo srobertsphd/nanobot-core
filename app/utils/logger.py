@@ -10,7 +10,7 @@ import logging
 from app.config.logging_config import configure_logging
 
 # Initialize logging configuration when this module is imported
-configure_logging()
+# configure_logging()
 
 
 def get_logger(name: str) -> logging.Logger:

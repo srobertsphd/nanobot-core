@@ -19,6 +19,19 @@ Available chunking strategies:
 import sys
 import os
 
+# ------------------------------------------------------------
+# Need to initialize logging before other imports that call the logger
+# ------------------------------------------------------------
+
+from app.utils.logger import configure_logging, get_logger
+
+configure_logging()
+logger = get_logger(__name__)
+
+# ------------------------------------------------------------
+# ---
+# ------------------------------------------------------------
+
 from app.services.document_service import DocumentService
 from app.utils.file_handling import get_files_from_base_path
 from app.database.setup import initialize_database, create_database
@@ -27,13 +40,11 @@ import psycopg2
 # from app.services.openai_service import initialize_openai_and_logfire
 
 # Default directory for documents
-DEFAULT_DOCS_DIR = "/home/sng/nanobot-poc/data/original"
+DEFAULT_DOCS_DIR = str(settings.file_paths.get_original_docs_path())
 
 # Create document service once
 document_service = DocumentService()
 
-reload_settings()  # Ensure settings are loaded
-# initialize_openai_and_logfire()
 
 def ensure_database_exists():
     """Check if the database exists and create it if it doesn't."""
