@@ -14,12 +14,15 @@ from openai import OpenAI
 # set up dedicated logger for the openai service
 logger = logging.getLogger(__name__)
 
-# Initialize the OpenAI client
-client = OpenAI(api_key=settings.openai.api_key)
+client = None
 
-# You can use both approaches: instrument the client for automatic tracing
-# AND use decorators for additional context
-logfire.instrument_openai(client)
+def initialize_openai_and_logfire():
+    global client
+    # Set up Logfire with the token from settings
+    if settings.logfire.token:
+        logfire.configure(token=settings.logfire.token)
+    client = OpenAI(api_key=settings.openai.api_key)
+    logfire.instrument_openai(client)
 
 @logfire.instrument("openai.embedding", extract_args=True)
 def get_embedding(text, model=None) -> list[float]:
