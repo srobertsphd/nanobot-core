@@ -15,9 +15,9 @@ logger = get_logger(__name__)
 # ------------------------------------------------------------
 # ------------------------------------------------------------
 
-from app.database.common import get_connection
-from app.database.retrieval import search_similar_chunks_with_filters, get_chunking_strategies, get_filenames
-from app.services.openai_service import get_chat_response
+from app.database.common import get_connection  # noqa: E402
+from app.database.retrieval import search_similar_chunks_with_filters, get_chunking_strategies, get_filenames  # noqa: E402
+from app.services.openai_service import get_chat_response  # noqa: E402
 
 if "logging_initialized" not in st.session_state:
     configure_logging()  # Only logging (including Logfire handler)

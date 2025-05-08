@@ -23,7 +23,8 @@ import os
 # Need to initialize logging before other imports that call the logger
 # ------------------------------------------------------------
 
-from app.utils.logger import configure_logging, get_logger
+from app.utils.logger import get_logger
+from app.config.logging_config import configure_logging
 
 configure_logging()
 logger = get_logger(__name__)
