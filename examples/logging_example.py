@@ -5,14 +5,16 @@ Logging Example
 This script demonstrates how to use the logging configuration in your code.
 Run it directly to see logging in action.
 """
-
-from app.utils.logger import get_logger
 import logging
 from app.services.openai_service import get_embedding, get_chat_response
 import time
+from app.utils.logger import get_logger
+from app.config.logging_config import configure_logging
 
-# Get a logger for this module
+configure_logging()
 logger = get_logger(__name__)
+
+
 
 
 def demonstrate_logging():
