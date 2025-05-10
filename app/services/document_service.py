@@ -7,7 +7,7 @@ from extraction to chunking to embedding and database operations.
 
 from app.services.chunking_service import ChunkingService
 from app.services.openai_service import get_embedding
-from app.utils.file_handling import save_docling_and_md
+from app.utils.file_handling import save_docling_and_md, save_chunk_results
 from docling.document_converter import DocumentConverter
 from app.database.common import get_connection
 from app.database.insert import bulk_validate_and_insert_chunks
@@ -25,15 +25,10 @@ class DocumentService:
     # Basic Operations - Core document processing functions
     #--------------------------------------------------------------------------
     
-    def convert_document(self, doc_path: str, save_intermediate: bool = True):
+    def convert_document(self, doc_path: str):
         """Convert a document to docling format."""
         print(f"Docling is now converting {doc_path}...")
         result = self.converter.convert(doc_path)
-        
-        if save_intermediate:
-            print("Saving docling and md...")
-            save_docling_and_md(doc_path, result)
-        
         print("Document conversion complete!")
         return result
     
@@ -70,24 +65,22 @@ class DocumentService:
     def convert_and_chunk_document(self, doc_path: str, chunking_strategy: str = "default", save_intermediate: bool = True):
         """Process a document and return chunks for preview before embedding."""
         # Convert document
-        converted_doc = self.convert_document(doc_path, save_intermediate)
+        converted_doc = self.convert_document(doc_path)
         
-        # Chunk the converted document
-        return self.chunk_document(converted_doc, chunking_strategy)
-
-    def convert_chunk_and_embed_document(self, doc_path: str, chunking_strategy: str = "default", save_intermediate: bool = True):
-        """Process a document with the complete pipeline."""
-        # Convert document
-        converted_doc = self.convert_document(doc_path, save_intermediate)
+        # Save intermediate docling and md if requested
+        if save_intermediate:
+            print("Saving docling and md...")
+            save_docling_and_md(doc_path, converted_doc)
         
-        # Chunk the converted document
         chunks = self.chunk_document(converted_doc, chunking_strategy)
         
-        # Add embeddings
-        chunks_with_embeddings = self.get_embeddings_for_chunks(chunks)
+        # Save intermediate chunks if requested
+        if save_intermediate:
+            save_chunk_results(doc_path, chunks, chunking_strategy)
         
-        return chunks_with_embeddings
-    
+        return chunks
+
+     
     #--------------------------------------------------------------------------
     # High-level Operations - Database interactions and complete pipelines
     #--------------------------------------------------------------------------

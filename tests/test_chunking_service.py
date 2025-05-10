@@ -26,7 +26,7 @@ def test_document():
         pytest.skip(f"Sample document not found at {SAMPLE_DOC_PATH}")
     
     document_service = DocumentService()
-    result = document_service.convert_document(SAMPLE_DOC_PATH, save_intermediate=False)
+    result = document_service.convert_document(SAMPLE_DOC_PATH)
     return result.document
 
 def test_get_chunker_types(chunking_service):
@@ -110,7 +110,7 @@ def test_real_document_chunking(chunking_service):
     """Test chunking with a real document."""
     # Convert the document
     document_service = DocumentService()
-    result = document_service.convert_document(SAMPLE_DOC_PATH, save_intermediate=False)
+    result = document_service.convert_document(SAMPLE_DOC_PATH)
     
     # Test each strategy
     strategies = ["default", "fine_grained", "balanced", "context", "hierarchical"]

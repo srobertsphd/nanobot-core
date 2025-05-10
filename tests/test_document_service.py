@@ -17,12 +17,12 @@ def test_convert_document(document_service):
     if not os.path.exists(SAMPLE_DOC_PATH):
         pytest.skip(f"Sample document not found at {SAMPLE_DOC_PATH}")
     
-    # Test with save_intermediate=False to avoid file operations
-    result = document_service.convert_document(SAMPLE_DOC_PATH, save_intermediate=False)
+    # Remove save_intermediate parameter
+    result = document_service.convert_document(SAMPLE_DOC_PATH)
     
     # Basic validation
     assert result is not None
-    assert hasattr(result, 'document')  # Check if result has a document attribute
+    assert hasattr(result, 'document')
     
     # Access the document and check its properties
     doc = result.document
@@ -34,9 +34,9 @@ def test_process_document_pipeline(document_service):
     if not os.path.exists(SAMPLE_DOC_PATH):
         pytest.skip(f"Sample document not found at {SAMPLE_DOC_PATH}")
     
-    # Process document with default strategy
-    chunks = document_service.convert_chunk_and_embed_document(
-        SAMPLE_DOC_PATH, 
+    # Use convert_and_chunk_document instead of convert_chunk_and_embed_document
+    chunks = document_service.convert_and_chunk_document(
+        SAMPLE_DOC_PATH,
         chunking_strategy="default",
         save_intermediate=False
     )
@@ -47,7 +47,10 @@ def test_process_document_pipeline(document_service):
     
     # Check structure of processed chunks
     for chunk in chunks:
-        assert "text" in chunk
-        assert "metadata" in chunk
-        assert "vector" in chunk
-        assert len(chunk["vector"]) > 0
+        # Check dictionary structure instead of attributes
+        assert isinstance(chunk, dict)
+        assert 'text' in chunk
+        assert 'metadata' in chunk
+        assert isinstance(chunk['metadata'], dict)
+        assert 'chunking_strategy' in chunk['metadata']
+        assert 'filename' in chunk['metadata']
