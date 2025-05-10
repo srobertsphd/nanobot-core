@@ -104,13 +104,13 @@ def initialize_database(use_neon=None):
     conn = get_connection(use_neon=use_neon)
     try:
         enable_pgvector_extension(conn)
-        print(f"✅ pgvector extension enabled in {db_type} database")
+        print(f"✅ Initialized pgvector extension in {db_type} database")
         
         create_tables(conn)
-        print(f"✅ Tables created in {db_type} database")
+        print(f"✅ Initialized tables in {db_type} database")
         
         create_vector_index(conn)
-        print(f"✅ Vector index created in {db_type} database")
+        print(f"✅ Initialized vector index in {db_type} database")
         
         conn.commit()
         print(f"✅ {db_type} database initialized successfully")
