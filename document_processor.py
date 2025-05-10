@@ -19,15 +19,7 @@ Available chunking strategies:
 import sys
 import os
 
-# ------------------------------------------------------------
-# Need to initialize logging before other imports that call the logger
-# ------------------------------------------------------------
 
-from app.utils.logger import get_logger
-from app.config.logging_config import configure_logging
-
-configure_logging()
-logger = get_logger(__name__)
 
 # ------------------------------------------------------------
 # ---
@@ -39,6 +31,16 @@ from app.database.setup import initialize_database, create_database
 from app.config.settings import settings, reload_settings
 import psycopg2
 # from app.services.openai_service import initialize_openai_and_logfire
+
+# ------------------------------------------------------------
+# Need to initialize logging before other imports that call the logger
+# ------------------------------------------------------------
+
+from app.utils.logger import get_logger
+from app.config.logging_config import configure_logging
+
+configure_logging()
+logger = get_logger(__name__)
 
 # Default directory for documents
 DEFAULT_DOCS_DIR = str(settings.file_paths.get_original_docs_path())

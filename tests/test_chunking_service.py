@@ -10,8 +10,10 @@ from app.services.document_service import DocumentService
 from docling.chunking import HybridChunker, HierarchicalChunker
 from app.utils.tokenizer import OpenAITokenizerWrapper
 
-# Sample document path - update with a path that exists in your test environment
-SAMPLE_DOC_PATH = "/home/sng/nanobot-poc/data/sample-pdf-files/grant_decision_email_single_page.pdf"
+from pathlib import Path
+
+# This will work from any test file
+SAMPLE_DOC_PATH = Path(__file__).parent / "test_data" / "grant_report_with_graph_3_page.pdf"
 
 @pytest.fixture
 def chunking_service():
