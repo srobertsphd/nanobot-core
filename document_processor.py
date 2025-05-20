@@ -20,7 +20,6 @@ import sys
 import os
 
 
-
 # ------------------------------------------------------------
 # ---
 # ------------------------------------------------------------
@@ -53,9 +52,9 @@ def ensure_database_exists():
     """Check if the database exists and create it if it doesn't."""
     # Reload settings to get latest values from .env
     reload_settings()
-    
+
     db_name = settings.local_db.name
-    
+
     # Try to connect to the database using regular credentials
     try:
         conn = psycopg2.connect(**settings.local_db.get_connection_dict())
@@ -71,30 +70,31 @@ def ensure_database_exists():
             print(f"Error connecting to database: {e}")
             raise
 
+
 def process_file(file_path, chunking_strategy="default"):
     """Process a single file and load it into the database.
-    
+
     Args:
         file_path: Path to the file to process
         chunking_strategy: Strategy to use for chunking (default, balanced, fine_grained, etc.)
-    
+
     Returns:
         Number of chunks inserted into the database
     """
     print(f"\n=== Processing {file_path} with '{chunking_strategy}' strategy ===")
-    
+
     try:
         # Use the document service to handle the entire pipeline
         chunk_ids = document_service.process_and_store_document(
-            file_path, 
-            chunking_strategy=chunking_strategy
+            file_path, chunking_strategy=chunking_strategy
         )
-        
+
         print(f"Inserted {len(chunk_ids)} chunks into database")
         return len(chunk_ids)
     except Exception as e:
         print(f"Error processing {file_path}: {str(e)}")
         return 0
+
 
 def main():
     """Main processing function."""
@@ -102,58 +102,67 @@ def main():
     if len(sys.argv) < 2:
         print("Error: Missing argument")
         print("Usage:")
-        print("  python -m process_and_load file.pdf [--strategy STRATEGY]  # Process a single file")
-        print("  python -m process_and_load --all [--strategy STRATEGY]     # Process all files")
+        print(
+            "  python -m process_and_load file.pdf [--strategy STRATEGY]  # Process a single file"
+        )
+        print(
+            "  python -m process_and_load --all [--strategy STRATEGY]     # Process all files"
+        )
         return
-    
+
     # Parse arguments
     arg = sys.argv[1]
     chunking_strategy = "default"
-    
+
     # Check for strategy flag
     if "--strategy" in sys.argv:
         strategy_index = sys.argv.index("--strategy")
         if strategy_index + 1 < len(sys.argv):
             chunking_strategy = sys.argv[strategy_index + 1]
             print(f"Using chunking strategy: {chunking_strategy}")
-    
+
     # Ensure database exists
     ensure_database_exists()
-    
+
     # Initialize database
     initialize_database()
-    
+
     # Process based on argument
     if arg == "--all":
         # Process all files (explicit flag required)
         print(f"Processing all files in {DEFAULT_DOCS_DIR}")
         files = get_files_from_base_path(DEFAULT_DOCS_DIR)
-        
+
         if not files:
             print("No files found!")
             return
-            
+
         print(f"Found {len(files)} files to process")
-        
+
         total_chunks = 0
         for file in files:
             chunks = process_file(file, chunking_strategy=chunking_strategy)
             total_chunks += chunks
-            
-        print(f"\nAll documents processed! Inserted {total_chunks} total chunks into database.")
-    
+
+        print(
+            f"\nAll documents processed! Inserted {total_chunks} total chunks into database."
+        )
+
     else:
         # Process single file
         file_path = arg
-        if not os.path.isfile(file_path):
+        # if not os.path.isfile(file_path):
+        #     print(f"Error: File not found: {file_path}")
+        #     return
+        if not file_path.startswith(("http://", "https://")) and not os.path.isfile(
+            file_path
+        ):
             print(f"Error: File not found: {file_path}")
             return
-            
+
         process_file(file_path, chunking_strategy=chunking_strategy)
         print("\nFile processing complete!")
 
+
 if __name__ == "__main__":
     main()
-
-
-
