@@ -1,0 +1,100 @@
+## Standard Operating Procedure:
+
+## Hydrofluoric Acid
+
+## Table of Contents
+
+| Table of Contents.................................................................................................................................. 1                                                                                                                                                  |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Principle of Operation...........................................................................................................................2                                                                                                                                                     |
+| Material Requirements......................................................................................................................... 2                                                                                                                                                       |
+| Procedure............................................................................................................................................. 2                                                                                                                                               |
+| Preparation.............................................................................................................................................2                                                                                                                                              |
+| HF Etch....................................................................................................................................................3                                                                                                                                           |
+| Cleanup...................................................................................................................................................3  Emergency Response Procedure............................................................................................................3 |
+| Skin Exposure......................................................................................................................................... 4                                                                                                                                               |
+| Eye Exposure.......................................................................................................................................... 4                                                                                                                                               |
+| Inhalation............................................................................................................................................... 4                                                                                                                                            |
+| Revision History:................................................................................................................................... 5                                                                                                                                                 |
+
+## Principle of Operation
+
+To safely use Hydrofluoric Acid.
+
+Hydrofluoric  Acid  (HF)  has  a  number  of  chemical,  physical  and  toxicological  properties  that make handling this material particularly hazardous.  Anhydrous HF is a clear, colorless, fuming, corrosive liquid.   HF is  also  available  in the gaseous state.   All forms including the solution or the vapor can cause severe burns to tissue.  Hydrofluoric Acid solutions are clear and colorless with  a  density  similar  to  that  of  water.   The  most  widely  known  property  of  HF  is its ability to dissolve  glass. It  will  also  attack  glazes,  enamels,  pottery,  concrete,  rubber,  leather,  many metals  (especially  cast  iron)  and  organic  compounds.   Upon reaction with metals, explosive hydrogen  gas  may be formed.   HF must be used and stored in polyethylene, polypropylene, Teflon, wax, lead or platinum containers.
+
+## Material Requirements
+
+Equipment:  substrate,  Polypropylene  beakers and vessels, plastic tweezers and/or any other HF-approved lab ware
+
+Caution: HF etches glass, so glass is incompatible with HF.
+
+Chemicals: Hydrofluoric Acid and deionized water
+
+- -Hydrofluoric Acid Hazards
+- o Hydrofluoric Acid (HF) differs from other acids because the fluoride ion readily penetrates the skin, causing destruction of deep tissue layers, including bone. Pain associated with exposure to solutions of HF (1-50%) may be delayed for 1-24 hours.  If HF is not rapidly neutralized and the fluoride ion bound, tissue destruction  may  continue  for  days  and  result  in  limb  loss  or  death.   HF  is similar  to  other  acids  in  that  the  initial  extent  of  a  burn  depends  on  the concentration, the temperature, and the duration of contact with the acid.
+
+Personal Protective Equipment: Trionic gloves on top of nitrile gloves, apron, safety glasses and face-shield
+
+## Procedure
+
+## Preparation
+
+- 1. Read the SDS for Hydrofluoric Acid.
+- 2. Read this document.
+
+- 3. Identify the location of the HF Safety kit and Calcium Gluconate Gel.
+- 4. Ensure that the fume hood in which the work will be performed is designated for HF use and is in good working order:
+- a. The fume hood has adequate exhaust
+- b. No alarms are visible
+- c. The HF carboy is not full
+- d. There are no visible spills in the hood
+- 5. You cannot use HF alone. When using HF, you must ensure that there is at least one other person (your chemical buddy) in the vicinity of the process at all times. That person must  call  Public  Safety  (212-650-7777) in the event of an emergency and also watch over  the  process  with  you  to  ensure  yours  and  everyone else's safety by preventing people coming near the hood or bumping you when you're handling the acid.
+- 6. Ensure that all the PPE is in good working order and is free of defects.
+- 7. Don the PPE.
+
+## HF Etch
+
+- 1. Once all the PPE has been donned, carefully remove a bottle of HF from the HF storage cabinet.
+- 2. Pour HF into an appropriate (and chemically compatible) vessel.
+- 3. Immerse your sample in HF. Note: It is always best to ensure that the sample remains upright in the vessel. It is also very highly recommended to use locking tweezers so that the sample can be easily lifted from the vessel without agitating the solution.
+- 4. The HF rate for glass is approximately 1 µm/min.
+- 5. Place the sample into a second beaker filled with DI water to rinse it.
+- 6. Remove the sample from the beaker and perform a final DI water rinse.
+
+## Cleanup
+
+- 1. Carefully pour the HF waste and the contaminated DI water into the HF waste container. The first rinse of each beaker must also go into this waste container. .
+- 2. Triple rinse all equipment with DI water and blow dry with nitrogen gun.
+- 3. Clean up the bench and ensure that it is free of all liquids and debris.
+- 4. Inspect all of the PPE to ensure that it did not come in contact with HF.
+
+## Emergency Response Procedure
+
+In the event of an HF  exposure  your  chemical  buddy  must  call  Public  Safety (212-650-7777),  and  notify  them  of  the  nature  of  the  emergency. When the ambulance arrives, the chemical safety buddy must explain to the emergency personnel the nature of  the  exposure,  give  them  the  MSDS,  and  request  that  the  victim  be  transported  to Columbia Presbyterian Medical Center, which is equipped to handle HF burns. Note: The
+
+ambulance  driver  may  not  always  comply  with  this  request, in which case the proper emergency room should be left to the discretion of the driver.
+
+## Skin Exposure
+
+- 1. Move  the  victim  immediately  under  an  emergency  shower or other water source and flush  the  affected  area  with large amounts of cool running water for at least 5 minutes. Clothing,  shoes  and  jewelry  should  be  removed  while  the  water  is  flowing  onto  the victim.  Goggles  should  be  removed  last  while  the  victim  is  facing  the  water  flow. Colleagues  must  be  EXTREMELY  CAREFUL  not  to  become  contaminated  while assisting the victim. Thick Neoprene or Nitrile must be worn.
+- 2. While the victim is being rinsed with water, call Public Safety (212-650-7777) and inform the  emergency  dispatcher  of  the  exposure  and  request emergency transport. Ensure emergency responders and treating physicians are aware of the nature of the chemical exposure. Provide a copy of the MSDS to emergency responders.
+- 3. After the affected area is flushed with copious amounts of water for at least five minutes, apply 2.5% calcium gluconate gel according to this procedure. Massage gel into affected areas. Flush skin surfaces with water for at least 15 minutes if calcium gluconate gel is not available. In order to prevent cross contamination, the victim should self-apply the calcium gluconate gel. If the victim is unable to self-apply, anyone present can apply the gel after first putting on thick neoprene or nitrile gloves. Do not use latex gloves because they are not an effective barrier against HF. Note the time when the calcium gluconate gel  was  first  applied  to  the  contaminated  skin  and  provide  this  information  to  the emergency responders. Re-apply gel every 15 minutes until medical assistance arrives.
+- 4. After  the  emergency  responders  arrive  they  will  call  the  Emergency Room doctor for instructions  and  may  administer  the calcium carbonate tablets (antacid tablets) in the Spill Exposure Kit.
+
+## Eye Exposure
+
+- 1. Immediately flush eyes for at least 5 minutes with copious cool flowing water. Call Public Safety  (212-650-7777), inform the emergency dispatcher of the exposure and request emergency  transport.  The  victim  should  then  be  transported  to  a  medical  facility. MEDICAL  PERSONNEL  may  apply  a  sterile  1%  calcium  gluconate  solution  to  the victim's eyes after irrigation.
+- 2. Ensure  emergency responders and treating physicians are aware of the nature of the chemical exposure. Provide a copy of the MSDS to emergency responders.
+
+## Inhalation
+
+- 1. If  a  large  volume  of  Hydrofluoric  Acid gas is inhaled. Immediately remove the victim to clean  air.  Call  Public  Safety  (212-650-7777),  inform  the  emergency dispatcher of the exposure and request emergency transport.
+- 2. Ensure  emergency responders and treating physicians are aware of the nature of the chemical exposure. Provide a copy of the MSDS to emergency responders.
+
+- 3. Inhalation of Hydrofluoric Acid fumes may cause swelling in the respiratory tract up to 24 hours  after  exposure.  Persons  who  have  inhaled  Hydrofluoric  Acid vapors may need prophylactic oxygen treatment and must be seen by a physician as soon as possible.
+
+## Revision History:
+
+- ● Revision 0.0- September 6 th , 2017 Jasmine Sabio
+- ● Revision  1.0-  November  20 th , 2024  Emma  Anquillare,  Shawn  Kilpatrick,  Samantha Roberts

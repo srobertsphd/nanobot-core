@@ -1,126 +1,54 @@
 chunk_id,text,text_length,meta_filename,meta_page_numbers,meta_title,meta_headings,meta_chunking_strategy
-0,RIE,3,RIESOPv2DRAFT.pdf,1,Standard Operating Procedure:,Standard Operating Procedure:,default
-1,The Reactive Ion Etcher (RIE) uses a radio-frequency-powered electromagnetic field to generate a plasma in a vacuum chamber. Gasses pumped in while the RF power is active are ionized and bombard the sample- removing material through both chemical and physical mechanisms.,271,RIESOPv2DRAFT.pdf,1,Section 1: Hardware Description and Principle of Operation,Section 1: Hardware Description and Principle of Operation,default
-2,"Ultraviolet Radiation
-Mechanical Pinch-Point (also add high voltage? No sticker on tool)
-Note- If you are sensitive to magnetic fields (eg- use a Pacemaker) please consult with tool manager. (There are magnets in the turbo pump at the tool rear)",245,RIESOPv2DRAFT.pdf,2,Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-3,"Be aware that hazardous flammable and oxidizing gasses are used in the RIE tool. The gasses are safely contained, and the lab is equipped with a Toxic Gas Monitoring System (TGMS)- but always be alert and aware of any unusual tool behavior. Contact staff immediately with concerns. Evacuate the building immediately if the TGMS Blue Light Alarm sounds and encourage others to do so too. If the TGMS Yellow Light Alarm sounds, evacuate the cleanroom. If you ever smell anything unusual during venting, immediately close the tool and contact staff.
-Any process recipe using a double-valve interlocked Hazardous Gas needs to incorporate a sufficient inert purge step afterwards (5 minutes, 100 SCCM Argon). The double-valve interlocked hazardous gas on the RIE is Methane (CH ). 4
-Oxidizing and flammable gasses must never mix in the chamber . On this tool, the oxidizing gas is Oxygen (O ) and the flammable gas is Methane (CH ). 2 4
-Gas
-GHS Labels
-Hazards
-Revision 2.0     Created May 15, 2025",992,RIESOPv2DRAFT.pdf,2,Note On Hazardous Gasses:,Note On Hazardous Gasses:,default
-4,"Argon (Ar), -Gasses Under Pressure   -Danger  -Oxidizing! = -Gasses Under Pressure (may displace  oxygen)  -Warning  -Simple Asphyxiant. Methane (CH4), -Gasses Under Pressure   -Danger  -Oxidizing! = -Gasses Under Pressure (may displace  oxygen)  -Danger  -Flammable!. Trifluoromethane (CHF3), -Gasses Under Pressure   -Danger  -Oxidizing! = -Gasses Under Pressure (may displace  oxygen)  -Warning  -Specific Target Organ Toxicity -  Single Exposure. Sulfur Hexafluoride (SF )  6, -Gasses Under Pressure   -Danger  -Oxidizing! = -Gasses Under Pressure (may displace  oxygen)  -Warning. Tetrafluoromethane (CF4 ), -Gasses Under Pressure   -Danger  -Oxidizing! = -Gasses Under Pressure (may displace  oxygen)  -Warning
-For Full MSDS Information, Visit:
-O2:  https://www.airgas.com/msds/001043.pdf
-Ar: https://www.airgas.com/msds/001004.pdf
-CH4: https://www.airgas.com/msds/001033.pdf
-CHF3:
-https://www.efcgases.com/wp-content/uploads/2024/09/EFC-Trifluoromethane-SDS-EF-004.pdf ?x83664
-SF6: https://www.airgas.com/msds/001048.pdf
-CF4: https://www.airgas.com/msds/001051.pdf",1071,RIESOPv2DRAFT.pdf,"3, 4",Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-5,"Inhalation, (eye/skin contact? UV/Rf stuff? NOTE ICP F WAFER SMELL ISSUE)",73,RIESOPv2DRAFT.pdf,4,Section 4: Routes of Exposure,Section 4: Routes of Exposure,default
-6,"Before using the tool, all users must have already been approved to access the cleanroom facility. While using the tool, users must adhere to all rules outlined during cleanroom orientation and in the facility manuals. Only users that have been qualified may use the tool independently. The steps required for qualification are given at the end of this SOP. Only the tool manager may qualify new users.
-It is the responsibility of the tool user to always know the most up-to-date tool information. in the CUNY ASRC Nanofab slack. All users must join the slack channel.
-Recent information can be found in this SOP, may be shared via email, or in the #icp_rie channel (https://app.slack.com/client/T2SMN1H8Q/C364LUTGA)",716,RIESOPv2DRAFT.pdf,4,Section 5: Approval and Training,Section 5: Approval and Training,default
-7,"Cleanroom suits (including booties, hairnets, and hoods), nitrile cleanroom gloves, and eye protection are always required inside the cleanroom and when using the tool or the nearby nitrogen blow gun. (could also say just eye protection for N2 gun, but moving to mandating eye protection all the time anway)",307,RIESOPv2DRAFT.pdf,5,Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-8,"All materials (both exposed and not exposed) entering the tool must be disclosed and approved before insertion into only their approved etcher . Any changes to the materials or gas chemistry of the etch process must be explicitly approved in writing by the etch tool manager. Requests can be made using this form:
-https://asrc.formstack.com/forms/asrc_nanofabrication_facility_etch_process_request_form
-The form can also be accessed here:
-Fomblin oil is available at the ICP-RIE tools for chip adherence to carrier wafer if needed.
-Any item entering the chamber that is not a wafer, chip, or slide must be explicitly disclosed and approved.
-Chips and wafers processed in the RIE should not then be processed in the ICP-RIE tools, even if the  materials  they  are  made  of  would  usually  be  allowed.  Speak  to  tool  manager  for  further details.
-(Restrict carrier wafer to only tool training wafer?)",906,RIESOPv2DRAFT.pdf,5,Section ## : Material Approval Process and Restrictions,Section ## : Material Approval Process and Restrictions,default
-9,"All materials in the chamber must be first approved by the tool manager. As this tool does not have a load lock, it is generally advised that no toxic materials (eg- Arsenic, Indium Tin Oxide, MoSe2, WSe2, or any other material whose MSDS contains the symbols below) be etched in significant quantities. If permitted by the tool manager, any time a toxic material is etched, it must be followed by a purge step (5 minutes, 100 SCCM Argon) before the main chamber can be vented and opened. As a precaution, all recipes on this tool are followed by a built-in purge step that must always be run. There is also a stand alone 'PURGE' recipe that can be run if the step is accidentally skipped.
-Material MSDS Symbols indicating potential toxicity:
-If you need to prematurely stop a process step with hazardous gasses or materials, it is preferable to click 'Skip Phase' rather than stop . This ensures any additional purge steps of the recipe are completed before venting. (There is also a shorter purge built into the venting process)",1030,RIESOPv2DRAFT.pdf,6,Note on Toxic Materials:,Note on Toxic Materials:,default
-10,"1. Enable Badger.
-2. Ensure in 'Lab User' mode. Never operate in any other mode.
-3. Under the 'Manual' Menu tab (See Photo), check that the vacuum is sufficiently pumped down ('High Vac' gauge at 5x10 -5 Torr or less) and the tool is in 'Idle' mode.
-4. Ensure the previous user ran cleaning process by navigating to the 'Activity Explorer' Section of the 'Data' tab. Be sure to click 'Module' and 'Recipe' to sort by recipe and 'Refresh' for the most recent activity ( See Photo.)
-5. If for any reason a clean was not run- insert the white quartz cleaning plate and run a clean. No wafer is used in the clean. [See Clean Step IV]'",630,RIESOPv2DRAFT.pdf,6,I. Set Up,I. Set Up,default
-11,"CENTER
-RIE
-Note - the 'High Vac' gauge shows the pressure of the chamber when no process gas is running. If the 'High Vac' gauge is displaying a number, values in the 'Process Gauge' reading can be ignored. If a process gas is running or if the chamber is otherwise at high pressure, the 'High Vac Gauge' will turn off and the 'Process Gauge' value can be read.
-Note - If a gauge is stuck at 7.5x10-9 Torr and never fluctuates, this is not a real reading. The gauge is stuck and can be unstuck by running a venting or purging process. Tell tool manager if this happens.",569,RIESOPv2DRAFT.pdf,7,Standard Operating Procedure:,Standard Operating Procedure:,default
-12,"(Conditioning is optional but can help consistency of results)
-1. Insert the black graphite process plate (and if you like, your carrier/conditioning wafer as well) by first venting the chamber. (Click the 'Vent' Button on the Manual Page. You will hear a hissing noise)
-Note - if the tool has been under vacuum a long time, you may hear a loud 'thud' when venting begins. This is normal.
-Note - The material of a plate can affect a process and some processes may be run on other material plates if permitted
-Note - If the plate seems dirty, you may want to clean it with the nitrogen gun near the tool. Remember to wear eye protection if you do this.
-2. Wait for the entire Vent process countdown to complete. When the countdown is complete, it will return to an 'Idle' state and a purple '1' indicator will appear (See Photo). This typically takes about five minutes
-3. Turn the Open/ Close knob on the tool to 'Open' and hold down both green 'Start' buttons simultaneously to open chamber. (See Photo)
-4. Remove the white quartz cleaning plate, and insert the black graphite process plate. Be sure to align the screw in the surface of the tool chamber to the hole in the rear of the process plate. If you are using a carrier or conditioning wafer, place it in the groove at the center of the plate. The plasma will be strongest near the center of this circular groove.
-5. Turn the Open/Close knob on the tool to 'Close' and hold down both green 'Start' buttons simultaneously to close the chamber. The chamber is fully closed when it stops moving, and when the monitor displays an image of a closed chamber and only '1' purple indicator (not '2').
-6. Click 'Pump' in the Manual page to commence chamber pump down. This typically takes about 3-4 minutes.
-7. Go to the 'Recipes' tab in the lower menu to open the Recipe Editor page. Select your desired recipe from the recipe list on the left.",1894,RIESOPv2DRAFT.pdf,8,II. Conditioning Step/ Season Chamber,II. Conditioning Step/ Season Chamber,default
-13,"8. Click on the 'Step Time' number of the RF step, and it will change into a field that allows you to enter your desired conditioning/etch time. You must hit 'Enter' to save the value and click outside the region to revert to the setpoint view. The 'Stabilize' slider should always be 'off' for this step.
-9. Click the 'Save' Button Floppy Disk at the top of the screen. (If you do not save, your recipe changes will not register.)
-Users should not create their own new recipes. Users should not change anything but the Step Time of the RF/ etching steps of a recipe unless explicitly permitted to do so. Under no circumstances should users change the gasses used, Alarm levels, Maximum Reflected Powers, Tolerance Times, or Capacitor Positions. If you need further recipe customization, please contact the tool manager.
-NoteAny saved recipe changes will be permanent between sessions, so if you are allowed to change something beyond time please return it to the original setting when you are done
-NoteThe maximum reflected power is typically 5% of the forward power, not higher than 10% of the forward power, and not higher than 15W. Alarm level is typically ~5% of forward power and not higher than 5W. RF Power tolerance time is usually not higher than 10 seconds and should never be 0.  If you observe an unusual value please contact tool manager.
-Note - Processes in recipes are always sandwiched between 'pump to base pressure' steps. The recipes must always end with APC open, RF off, gasses off, and temperature at 20C.
-Note - Do not rely on a recipe to be identical to one you ran during another session just because the name is the same. Record all recipe setpoints when you run it and ensure they match desired values.
-10. Return to the 'Manual' display.
-11. Ensure the pressure in the chamber has dropped to 'Vacuum OK' status.
-12. Ensure that the chamber pressure has actually dropped to base pressure or lower (The base pressure for a process is 5x10 -5 torr (0.05 mtorr).
-13. Click on the Upper-Right (not Lower Left!) 'Recipes' Tab to open the 'Process Recipe' Sidebar Menu.
-14. Select your saved recipe from the drop-down recipe menu and click 'Start'
-15. Observe the process in the Manual Display. Ensure that actual process parameters match with setpoints, and that the 'Reflected Power' value is always very low. You must stay in the cleanroom for the entire process. Stop the process and contact staff if you notice any unusual behavior.
-16. Accept Pop-up message in lower-right corner when process is finished.
-If you need to prematurely stop a process step with hazardous gasses or materials, it is preferable to click 'Skip Phase' rather than stop . This ensures any additional purge steps of the recipe are completed.
-Note - The 'Pause' button will stop RF power but will not stop the flow of process gasses
-Note - Even after your plasma is off, you may still see small (<1) or negative numbers in the forward or reflected power fields. This is normal and there is no active RF power/plasma present.
-Note - Venting the chamber is the only time you should see any purple 'Process readiness' alerts on the screen. If you see them at any other time (or anything else in the schematic that appears purple but usually isn't) it usually indicates a tool issue. Contact staff if you observe this.
-Ready To Open Main Chamber :",3344,RIESOPv2DRAFT.pdf,"9, 10",Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-14,CENTER,6,RIESOPv2DRAFT.pdf,14,Recipe Page:,Recipe Page:,default
-15,RIE,3,RIESOPv2DRAFT.pdf,14,Standard Operating Procedure:,Standard Operating Procedure:,default
-16,Note - Plasma glow will likely be visible from viewport when plasma is active (though not always for very weak plasmas):,120,RIESOPv2DRAFT.pdf,14,Manual View During Process:,Manual View During Process:,default
-17,"Note - If attaching a chip to a carrier wafer, use only the smallest possible amount of Fomblin oil to adhere it to the center of the wafer and ensure even cooling. Apply evenly via the non-swab end of a swab so that the Fomblin oil is not visible after the chip is applied and ensure the chip doesn't move when gently nudged by tweezers. (Chips poorly applied can be disturbed by the vacuum). Visible Fomblin oil may affect your process. Fomblin oil (or any liquid) should never drip to the underside of the carrier wafer . Running a first etch on a dummy chip may be beneficial.
-1. Once conditioning process is complete, follow the steps above for venting the chamber, inserting your sample, and running a recipe. Make sure any mandatory purges for hazardous gasses or toxic materials are performed before opening the chamber. Retain the black graphite process plate in the chamber, and change the RF step time to your desired etch time. The etch recipe will vary from your conditioning etch only by the time of the etch step.
-2. Remember to record your etch in the user log
-NoteThe double arrow buttons may be used to change elements of the display. You can revert back to the original ' hybrid ' display via the ' View ' menu on the upper right hand corner. Some users may find the other, tabular display more convenient.",1325,RIESOPv2DRAFT.pdf,15,III. Etch Sample,III. Etch Sample,default
-18,"(This cleans the instrument chamber, not anything else)
-1. Once your etch is complete, vent the chamber as described above. Make sure any mandatory purges for hazardous gasses or toxic materials are performed before opening the chamber.
-2. Remove the graphite plate and insert the white quartz cleaning plate, (see photo) being certain to align the groove with the screw.
-3. 'Load' the tool's designated cleaning recipe and only change desired time. Clean for all active RF plasma time (conditioning + etching) plus 3 minutes. The Clean Recipe is 'OPT Clean'. Make sure the table temperature is set to 20°C.
-4. Run process. Stay logged into Badger and in the cleanroom for the entire clean.
-5. Accept pop-up alert when finished.
-6. Ensure the tool is left under vacuum when done and Temperature is at 20C.
-7. Disable Badger
-White Quartz Cleaning Plate :",853,RIESOPv2DRAFT.pdf,16,IV. Clean,IV. Clean,default
-19,"Only push this button if you feel you are in immediate physical danger- such as external arc flashing, sparks, or flames.
-If you see arc flashing or sparks within the chamber through the viewport: First, stop the process in the software ('stop' button) or jump to the next non-plasma step ('Skip Phase' button) to quell the arcing. If this does not stop the arcing, this may warrant use of the EMO button.
-A ticking noise during a plasma process accompanied by haywire RF numbers may also warrant use of the EMO button if attempting to stop it using the software doesn't work first.",582,RIESOPv2DRAFT.pdf,17,EMO Button,EMO Button,default
-20,"Make sure desired gas flow and power values are consistently close to their setpoints, and that reflected power is always low.
-When not in use, the table temperature should always be left at 20°C to avoid condensation build-up within the tool. Always make sure the Table temperature is at or approaching 20°C at the end of your session.",336,RIESOPv2DRAFT.pdf,18,Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-21,"● This instrument incorporates hazards such as high-voltage electronics, radio-frequency radiation, UV- radiation, compressed gasses, heated parts, pinch- points, and vacuum chambers. Never attempt to tinker with the tool or software beyond what is explicitly described in this SOP .
-● Oxidizing and flammable gasses should never mix. (eg- O  and CH  should never mix). If 2 4 you ever observe it immediately stop the process and alert staff.
-● The instrument should not be left at very low temperatures (0°C) for lengthy periods beyond what is needed for a process.
-● Fomblin oil should never be heated above 250°C (may decompose to HF). This should not be a problem over the table temperatures we etch in (maximum 80°C), but keep this in mind for any post-process work.
-● While you should keep an eye on your process periodically using the porthole, it's not advisable to stare deeply into it for lengthy periods with plasma running",934,RIESOPv2DRAFT.pdf,18,Disallowed Activities,Disallowed Activities,default
-22,"● Adjust Alarm levels, Maximum Reflected Powers, Tolerance Times, or Capacitor Positions
-● Place an item that is not a wafer, chip, or slide in the open chamber! (Any other item requires special approval). Always make sure the chamber is clear of unusual objects or debris.
-● Click 'Continue' with a process that has alarmed
-● Attempt to troubleshoot a problem themselves - photograph the alarm message or unusual behavior, contact staff, and await our instruction. If a process pauses due to an alarm and staff are not immediately available, be sure to 'stop' the process.
-● Place a new material in without gaining explicit approval from the etch tool manager via formstack. Anytime you want to change your process chemistry or put in a new material (regardless of whether or not it is etched), please submit a new form.
-● Leave the tool vented or open when not in use
-● Forget to run a clean at the end of the process.
-● Leave the cleanroom while running a plasma process",973,RIESOPv2DRAFT.pdf,18,"When operating this tool, Users should never:","When operating this tool, Users should never:",default
-23,"● Operate in any mode other than Lab User
-● Incorporate new gasses into a recipe that are not already utilized in that recipe or attempt to create a new recipe
-● Run a clean on the graphite process wafer",203,RIESOPv2DRAFT.pdf,19,Standard Operating Procedure: RIE,Standard Operating Procedure: RIE,default
-24,"In order to independently use this tool, a user must:
-1. Submit the formstack request(s) for their etch process(es) and receive written approval
-2. Attend an in-person training session
-3. Read this SOP and sign the 'Signature' page
-4. Demonstrate competence during an individual qualification session.
-5. Join the #icp_rie Slack channel
-6. Submit MSDS sheets for all materials to the tool manager and receive written approval
-Only the tool manager may train and approve new users. Any new materials/processes will require a new approved etch request form and additional MSDS sheets
-Current Tool Manager: Emma Anquillare (eanquillare@gc.cuny.edu)",645,RIESOPv2DRAFT.pdf,19,Badger Criteria,Badger Criteria,default
-25,"Revision 2.0- New PTIQ Software, Formstack Process
-Revision  3.0  -  5/15/25-  Updated  to  meet  lab-wide  SOP  standards and structure, other minor clarifications, correction on tolerance time. (Emma Anquillare)",213,RIESOPv2DRAFT.pdf,19,Revision History,Revision History,default
-26,"My  signature  below  indicates  that  I  have  read  this  SOP  and  will  abide  by  all  rules  and instructions.
-Revision 2.0     Created May 15, 2025",154,RIESOPv2DRAFT.pdf,20,Signature Page,Signature Page,default
+0,"To  clean  silicon  wafers  in  preparation  for  high-temperature  processing.  RCA  clean  is  a procedure for removing metal ions from silicon wafers. In the process it oxidizes the silicon and leaves a thin film of oxide on the surface of the wafer. If wafer proceeds to undergo thermal oxide processing, an HF or BOE clean should be added after the RCA-2 clean and before the spin rinse dryer to remove the native oxide layer.",431,RCACleanSOP.pdf,1,Principle of Operation,Principle of Operation,default
+1,"Equipment:  substrate,  three  Pyrex  bath  containers,  two  thermometers,  one  polypropylene containers (for HF dip), PFA wafer carrier with handles, and fluorocarbon (CTFE) tweezers
+-Note: A full set of dishes have been set aside for use with RCA cleaning. Do not use these dishes for any other purpose. Clean these dishes thoroughly before storing them.
+Chemicals:  Hydrofluoric  Acid  (HF  48-51%),  Hydrochloric  Acid  (HCl),  Ammonium  Hydroxide (NH4OH 30%), Hydrogen Peroxide (H2O2 30 %)
+-Chemical Hazards
+o HF: Liquid or vapors are serious health hazards, cause severe burns and bone loss,  which  may not be immediately painful or visible. Significant exposure (100 mL)  can  kill  directly.  Use  extreme  caution,  HF  is  very  hazardous,  both  acutely and long term.
+o HCl: Liquid or vapors are serious health hazards and cause severe burns.
+o NH4OH:  Liquid  is  extremely  basic  and  corrosive.  Exposure  can  cause  severe burns.
+o H2O2: Liquid or vapors are serious health hazards, and can cause severe burns. Peroxide is an explosive hazard and thus requires vented waste containers.
+Personal Protective Equipment: Trionic gloves on top of nitrile gloves, apron, safety glasses and face-shield",1216,RCACleanSOP.pdf,1,Material Requirements,Material Requirements,default
+2,"Set RCA-1 hotplate to >200°C to expedite heating. Set RCA-2 hotplate to 185°C to expedite heating. Note: Don't set RCA-2 hotplate and RCA-2 hotplate both above 200°C.
+1. Triple  rinse  all  beakers  with  DI  water  and  spray  dry  with  N   prior  to  beginning  the 2 process.
+2. Put 2 L DI water in RCA-1 beaker (use top of DI water label on beaker as a fill line). Add 325 mL Ammonium Hydroxide (use top of Ammonium Hydroxide label on beaker as a fill line). Heat to 85°C.
+3. Put 2 L DI water in RCA-2 beaker (use top of DI water label on beaker as a fill line). Add 325 mL Hydrogen Chloride (use top of Hydrogen Chloride label on beaker as a fill line). Heat to 85°C.
+4. Load wafer(s) onto wafer boat evenly across the boat.
+5. Fill Pyrex tank with DI water.",764,RCACleanSOP.pdf,"1, 2",RCA Clean Preparation,RCA Clean Preparation,default
+3,"1. Add 325 mL Hydrogen Peroxide to RCA-1 beaker (use top of Hydrogen Peroxide label on beaker as a fill line).
+2. Load wafer boat into beaker and soak for 10 minutes.
+3. Remove wafer boat from RCA-1 beaker under flowing water and load wafer boat into DI water tank.",265,RCACleanSOP.pdf,2,RCA-1 Clean (H2O2:NH4OH:H2O - 1:1:5),RCA-1 Clean (H2O2:NH4OH:H2O - 1:1:5),default
+4,"HF dip container will be set-up by staff and will be placed in the acid bench sink.
+1. Remove wafer boat from DI water tank under flowing water and transfer the boat to the HF dip.
+2. Wait one minute.
+3. Remove wafer boat from the HF dip under flowing water and transfer the boat to the DI water tank.",301,RCACleanSOP.pdf,2,HF Dip (HF:H2O - 1:100) [OPTIONAL],HF Dip (HF:H2O - 1:100) [OPTIONAL],default
+5,"1. Add 325 mL Hydrogen Peroxide to RCA-2 beaker.
+2. Load wafer boat into beaker and soak for 15 minutes.
+3. Dispose of contaminated DI water in DI water tank, rinse, and refill with DI water.
+4. Remove wafer boat from RCA-2 beaker under flowing water and load wafer boat into DI water tank.",290,RCACleanSOP.pdf,2,RCA-2 Clean (H2O2:HCl:H2O - 1:1:5),RCA-2 Clean (H2O2:HCl:H2O - 1:1:5),default
+6,"1. Remove wafer boat from DI water tank under flowing water and load wafer boat into the spin rinse dryer.
+2. Turn on Nitrogen line and press the power button.
+3. Press Start Screen and press start.
+4. When the process is complete, press power button and turn off Nitrogen line.
+5. Remove wafer boat from spin rinse dryer.",322,RCACleanSOP.pdf,2,Spin Rinse Dryer,Spin Rinse Dryer,default
+7,"1. Dip  tweezers  in  RCA-1 beaker for 10 seconds, DI water tank for 10 seconds, RCA-2 beaker for 10 seconds, and DI water tank. Rinse clean and spray dry with nitrogen gun.
+2. Triple rinse DI water tank, thermometers, and wafer boat carriers and spray dry with N 2 gun.
+3. Wait for RCA-1 and RCA-2 to cool to room temperature.
+4. If recycling RCA-1 and RCA-2: cover tanks with plastic covers.
+5. Pour the RCA-1 solution into the RCA-1 waste carboy.
+6. Triple rinse the RCA-1 tank with DI water and spray dry with N  gun. 2
+7. Pour the RCA-2 solution into the RCA-2 waste carboy.
+8. Triple rinse the RCA-2 tank with DI water and spray dry with N  gun. 2
+9. Return cleaned and dried labware to their proper location.
+10.  Wipe  up  any  drips  in  the  area  with  lab  wipes  and  dispose  of  them  in  the appropriate trash container.
+11. Store the Hydrochloric Acid in the acids cabinet, the Ammonium Hydroxide in the caustics cabinet and the Hydrogen Peroxide in the oxidizers cabinet.
+12.  Inspect  all  of  the  PPE  to  ensure it  did  not  come in contact with the chemicals before returning it to its storage location.",1127,RCACleanSOP.pdf,3,Cleanup,Cleanup,default
+8,"-Skin: Rinse affected area with water for 5 minutes, removing contaminated clothing during rinse. Apply generous  amounts  of  calcium  gluconate. Get  immediate medical attention.
+-Eye: Immediately flush with water for at least 20 minutes while lifting upper and lower eyelids occasionally. Get immediate medical attention.
+-Ingestion: Do not induce vomiting. Get immediate medical attention.
+-Inhalation: Remove to fresh air. Resuscitate if necessary. Take care not to inhale any fumes released from the victim's lungs. Get immediate medical attention.",554,RCACleanSOP.pdf,3,Hydrofluoric Acid Contact,Hydrofluoric Acid Contact,default
+9,"-Skin: Remove contaminated clothing, rinse affected area with water for 10 minutes. If there is a visible burn, get immediate medical attention.
+-Eye: Immediately flush with water for at least 20 minutes while lifting upper and lower eyelids occasionally. Get immediate medical attention.
+-Ingestion: Do not induce vomiting. Get immediate medical attention.
+-Inhalation: Remove to fresh air. Resuscitate if necessary. Take care not to inhale any fumes released from the victim's lungs. Get immediate medical attention.",518,RCACleanSOP.pdf,3,"Hydrochloric Acid, Ammonium Hydroxide and Hydrogen Peroxide Contact","Hydrochloric Acid, Ammonium Hydroxide and Hydrogen Peroxide Contact",default
+10,"If  a  small,  contained  spill  occurs, such as inside the hood, wipe it up with chemical wipes and dispose  of  them  in  the  proper  trash  container.  If  a  large  spill  occurs,  evacuate  the  area  and notify the cleanroom staff.",238,RCACleanSOP.pdf,4,Spills,Spills,default

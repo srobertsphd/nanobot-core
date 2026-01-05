@@ -1,4 +1,4 @@
-# Nanobot-POC
+# Nanobot-CORE
 
 ## Architecture Pattern
 

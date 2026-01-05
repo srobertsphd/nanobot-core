@@ -103,10 +103,16 @@ def main():
         print("Error: Missing argument")
         print("Usage:")
         print(
-            "  python -m process_and_load file.pdf [--strategy STRATEGY]  # Process a single file"
+            "  python document_processor.py file.pdf [--strategy STRATEGY]  # Process a single file"
         )
         print(
-            "  python -m process_and_load --all [--strategy STRATEGY]     # Process all files"
+            "  python document_processor.py https://example.com/doc.pdf [--strategy STRATEGY]  # Process a URL"
+        )
+        print(
+            "  python document_processor.py --all [--strategy STRATEGY]     # Process all files"
+        )
+        print(
+            "  python document_processor.py --url-list urls.txt [--strategy STRATEGY]  # Process URLs from a file"
         )
         return
 
@@ -148,12 +154,42 @@ def main():
             f"\nAll documents processed! Inserted {total_chunks} total chunks into database."
         )
 
+    elif arg == "--url-list":
+        # Process URLs from a file
+        if len(sys.argv) < 3:
+            print("Error: Missing URL list file path")
+            return
+
+        url_list_file = sys.argv[2]
+        if not os.path.isfile(url_list_file):
+            print(f"Error: URL list file not found: {url_list_file}")
+            return
+
+        # Read URLs from the file
+        with open(url_list_file, "r") as f:
+            urls = [
+                line.strip() for line in f if line.strip() and not line.startswith("#")
+            ]
+
+        if not urls:
+            print("No URLs found in the file!")
+            return
+
+        print(f"Found {len(urls)} URLs to process")
+
+        total_chunks = 0
+        for url in urls:
+            print(f"Processing URL: {url}")
+            chunks = process_file(url, chunking_strategy=chunking_strategy)
+            total_chunks += chunks
+
+        print(
+            f"\nAll URLs processed! Inserted {total_chunks} total chunks into database."
+        )
+
     else:
         # Process single file
         file_path = arg
-        # if not os.path.isfile(file_path):
-        #     print(f"Error: File not found: {file_path}")
-        #     return
         if not file_path.startswith(("http://", "https://")) and not os.path.isfile(
             file_path
         ):
