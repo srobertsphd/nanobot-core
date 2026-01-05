@@ -6,6 +6,14 @@ A comprehensive document processing and retrieval framework built for intelligen
 
 Nanobot-CORE is a production-ready framework that leverages IBM Docling for advanced document processing, PostgreSQL with pgvector for vector storage, and integrates with LogFire for comprehensive observability. The framework provides flexible database configuration, multiple LLM provider support, and customizable metadata management.
 
+**Mission**: This framework was created to address the need for standardized knowledge management solutions in academic and research environments. Nanobot-CORE serves as an open-source foundation that nanofabrication facilities can adopt, customize, and contribute to, enabling:
+- **Standardization**: Shared codebase and practices across facilities
+- **Collaboration**: Common framework for knowledge sharing and integration
+- **Education**: Teaching resource for implementing AI-powered knowledge management
+- **Innovation**: Foundation for academic and business innovations using generative AI
+
+By making advanced document processing and RAG capabilities accessible and standardized, Nanobot-CORE aims to accelerate the adoption of modern knowledge management techniques in research laboratories.
+
 ## Key Features
 
 ### Document Processing
