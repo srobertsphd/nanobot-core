@@ -155,4 +155,4 @@ The framework automatically initializes the database schema, enables pgvector ex
 
 ## License
 
-[Add your license information here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
