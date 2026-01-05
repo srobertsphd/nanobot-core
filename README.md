@@ -14,6 +14,8 @@ Nanobot-CORE is a production-ready framework that leverages IBM Docling for adva
 
 By making advanced document processing and RAG capabilities accessible and standardized, Nanobot-CORE aims to accelerate the adoption of modern knowledge management techniques in research laboratories.
 
+**Implementation**: Nanobot-CORE is built using fundamental Python with minimal abstractions. The pipeline is implemented directly in Python, with IBM Docling as the only external framework abstraction, ensuring transparency, maintainability, and full control over the document processing workflow.
+
 ## Key Features
 
 ### Document Processing
