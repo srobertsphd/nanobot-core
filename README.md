@@ -1,10 +1,10 @@
-# Nanobot-CORE
+# Nanobot-CORE (Collaborative Open Retrieval Engine)
 
-A comprehensive document processing and retrieval framework built for intelligent document ingestion, vector storage, and RAG (Retrieval-Augmented Generation) applications.
+A comprehensive Python document processing and retrieval framework built for intelligent document ingestion, vector storage, and RAG (Retrieval-Augmented Generation) applications.
 
 ## Overview
 
-Nanobot-CORE is a production-ready framework that leverages IBM Docling for advanced document processing, PostgreSQL with pgvector for vector storage, and integrates with LogFire for comprehensive observability. The framework provides flexible database configuration, multiple LLM provider support, and customizable metadata management.
+Nanobot-CORE is a production-ready framework that leverages IBM Docling for advanced document processing, PostgreSQL with pgvector for vector storage, and integrates with LogFire for comprehensive observability. The framework provides flexible database configuration, multiple LLM provider support, and customizable metadata management for LLM responses grounded in truth.  
 
 **Mission**: This framework was created to address the need for standardized knowledge management solutions in academic and research environments. Nanobot-CORE serves as an open-source foundation that nanofabrication facilities can adopt, customize, and contribute to, enabling:
 - **Standardization**: Shared codebase and practices across facilities
@@ -59,6 +59,8 @@ By making advanced document processing and RAG capabilities accessible and stand
 
 ## Document Processing Pipeline
 
+![Document Processing Pipeline Overview](assets/excalidraw_ingestion_pipeline.png)
+
 The complete document processing flow:
 
 1. **Document Conversion**: IBM Docling converts PDFs/documents, extracting images, tables, and hierarchical structure
@@ -69,6 +71,8 @@ The complete document processing flow:
 6. **RAG Integration**: LLM generates responses using retrieved context
 
 ## Project Structure
+
+![Document Processing Pipeline Overview](assets/excalidraw_application_layer.png)
 
 ### Core Components
 
@@ -138,7 +142,7 @@ streamlit run nanobot.py
 
 The framework automatically initializes the database schema, enables pgvector extension, and creates necessary indexes. Database selection (local vs external) is controlled via the `USE_NEON` environment variable.
 
-## Future Enhancements
+## Future Enhancements -- [In Progress]
 
 - **FastAPI Endpoints**: Complete REST API implementation with async support
 - **Event-Driven Architecture with Redis and Celery**:
